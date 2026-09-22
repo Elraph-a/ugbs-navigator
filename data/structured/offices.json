@@ -1,0 +1,141 @@
+{
+  "_README": [
+    "Hand-transcribed from published University of Ghana and UGBS sources.",
+    "These are the facts the system is not allowed to get wrong, so they are never",
+    "produced by a language model - see CLAUDE.md section 3, the grounding rule.",
+    "",
+    "Every field carries `source` (an id from data/sources.yaml) or is null.",
+    "null means 'not published', and the UI says so. Do not fill a null with a",
+    "plausible guess: a student who walks to the wrong building because we invented",
+    "a room number is exactly the failure this project exists to prevent."
+  ],
+  "offices": [
+    {
+      "id": "aad",
+      "name": "Academic Affairs Directorate",
+      "short_name": "AAD",
+      "parent": "University of Ghana",
+      "description": "Central directorate handling academic records, registration, transcripts and examination administration for all students, including UGBS.",
+      "location": null,
+      "location_source": null,
+      "building": null,
+      "phone": "+233-(0)302-213820",
+      "phone_source": "transcript_request",
+      "email": "pad@ug.edu.gh",
+      "email_source": "transcript_request",
+      "hours": null,
+      "url": "https://www.ug.edu.gh/aad",
+      "handles": [
+        "transcripts",
+        "registration",
+        "results_and_records",
+        "examinations",
+        "fees_and_finance"
+      ],
+      "location_note": "The University publishes Room D2 only for transcript collection and receipt submission. No general location for the Directorate is published, so the room is attached to those services rather than to the office."
+    },
+    {
+      "id": "sgs",
+      "name": "School of Graduate Studies",
+      "short_name": "SGS",
+      "parent": "University of Ghana",
+      "description": "Handles graduate student administration, including graduate transcripts and the graduate academic calendar. UGBS graduate students are served here rather than by the AAD for transcripts.",
+      "location": null,
+      "location_source": null,
+      "building": null,
+      "phone": null,
+      "email": "sgstranscript@ug.edu.gh",
+      "email_source": "transcript_request",
+      "email_note": "This address is specifically for graduate transcript enquiries.",
+      "hours": null,
+      "url": "https://sgs.ug.edu.gh",
+      "handles": [
+        "transcripts",
+        "results_and_records",
+        "registration"
+      ]
+    },
+    {
+      "id": "cash_office",
+      "name": "Cash Office",
+      "short_name": "Cash Office",
+      "parent": "University of Ghana",
+      "description": "Takes payment for services that cannot be paid for online, including express transcript requests and transcripts for students who graduated before 1996.",
+      "location": null,
+      "location_source": null,
+      "building": null,
+      "phone": null,
+      "email": null,
+      "hours": null,
+      "hours_note": "Express transcript requests must be submitted before 11:00 AM, which implies a morning cut-off rather than published opening hours.",
+      "url": null,
+      "handles": [
+        "fees_and_finance",
+        "transcripts"
+      ]
+    },
+    {
+      "id": "ugbs_admin",
+      "name": "University of Ghana Business School",
+      "short_name": "UGBS",
+      "parent": "College of Humanities, University of Ghana",
+      "description": "The Business School itself. First point of contact for programme, departmental and course-related matters for UGBS students.",
+      "location": "GPS GA-490-9425",
+      "location_source": "ugbs_contact_page",
+      "building": null,
+      "postal_address": "P. O. Box LG 78, Legon, Accra",
+      "phone": "+233 50 005 6328",
+      "phone_alt": "+233 50 158 1492",
+      "phone_source": "ugbs_contact_page",
+      "email": "ugbsmarcoms@ug.edu.gh",
+      "email_source": "ugbs_contact_page",
+      "email_note": "This is the Marketing and Communications address - the only contact UGBS publishes publicly. It is not a student-services desk.",
+      "hours": null,
+      "url": "https://ugbs.ug.edu.gh",
+      "handles": [
+        "course_advising",
+        "admissions",
+        "welfare_and_support"
+      ]
+    },
+    {
+      "id": "sts_portal",
+      "name": "STS Portal",
+      "short_name": "STS",
+      "parent": "University of Ghana",
+      "description": "Online self-service portal for transcript requests and payment, and for the examination timetable. Requests can be tracked here; a request marked Completed is ready for pickup or has been emailed.",
+      "location": "Online only",
+      "location_source": "transcript_request",
+      "building": null,
+      "phone": null,
+      "email": null,
+      "hours": null,
+      "url": "https://sts.ug.edu.gh",
+      "channel": "portal",
+      "handles": [
+        "transcripts",
+        "examinations"
+      ]
+    },
+    {
+      "id": "mis_web",
+      "name": "MIS Web (Student iEnabler)",
+      "short_name": "MIS Web",
+      "parent": "University of Ghana",
+      "description": "Online platform for course registration and checking results. Students should confirm their academic record here is correct before requesting a transcript.",
+      "location": "Online only",
+      "location_source": "transcript_request",
+      "building": null,
+      "phone": null,
+      "email": null,
+      "hours": null,
+      "url": "https://mis.ug.edu.gh",
+      "channel": "portal",
+      "handles": [
+        "registration",
+        "results_and_records",
+        "it_and_portals"
+      ]
+    }
+  ]
+}

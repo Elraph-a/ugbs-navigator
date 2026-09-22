@@ -1,0 +1,68 @@
+# HELD-OUT test set. Do not tune against these.
+#
+# tests/gold_questions.yaml was used during development: when a question failed,
+# an alias was added or a rule changed until it passed. Its scores therefore
+# measure how well the system fits questions it has already seen -- they are
+# development-set numbers, and they overstate performance on new questions.
+#
+# These were written after development finished, phrased the way students
+# actually write (lowercase, abbreviations, Ghanaian English, no keywords the
+# catalogue was built around) and run once. If one fails, record the failure in
+# the report; do not "fix" it and re-run, or this file stops being a test.
+
+in_scope:
+  - q: "pls how do i get my transcript sent to a company that wants to employ me"
+    expected_office: aad
+  - q: "whats the charge for a transcript by post"
+    expected_office: aad
+  - q: "i need it today, can i get transcript same day"
+    expected_office: aad
+    expected_service: transcript_express
+  - q: "my mum wants to pick up my transcript for me what should she bring"
+    expected_office: aad
+    expected_service: transcript_proxy_collection
+  - q: "I did my MPhil at UGBS, how do I get my transcript"
+    expected_office: sgs
+    expected_service: transcript_graduate
+  - q: "i completed in 1993 how can i get my results transcript"
+    expected_office: aad
+    expected_service: transcript_pre_1996
+  - q: "how do freshers register their courses"
+    expected_office: aad
+    expected_service: registration_freshman
+  - q: "where can i see my grades for last sem"
+    expected_office: mis_web
+    expected_service: check_results
+  - q: "one of my grades is wrong please help"
+    expected_office: aad
+    expected_service: grade_change
+  - q: "when are exams starting, where is the timetable"
+    expected_office: sts_portal
+    expected_service: exam_timetable
+  - q: "how much is school fees for level 100 business students"
+    expected_office: aad
+    expected_service: fees_schedule
+  - q: "im sick and want to pause school for a semester"
+    expected_office: aad
+    expected_service: deferment
+  - q: "i want to leave the university for good"
+    expected_office: aad
+    expected_service: withdrawal
+  - q: "my ID card got stolen"
+    expected_office: aad
+    expected_service: student_id_card
+  - q: "what do i need to do before graduation"
+    expected_office: aad
+    expected_service: graduation
+
+out_of_scope:
+  - q: "What will fees be for the 2028/2029 academic year?"
+    why: "fee year outside the indexed schedule"
+  - q: "can you recommend a good hostel near legon"
+    why: "not an administrative procedure"
+  - q: "solve this accounting question for me: debit cash 500"
+    why: "homework, not administration"
+  - q: "do you think I'll get first class"
+    why: "prediction about an individual student"
+  - q: "what is the capital of Australia"
+    why: "general knowledge"

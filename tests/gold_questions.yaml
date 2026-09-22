@@ -1,0 +1,133 @@
+# Gold set for tools/run_evaluation.py.
+#
+# `expected_office` is the office that should own the enquiry. `expected_service`
+# is checked when the enquiry has one correct procedure; leave it out when more
+# than one variant legitimately applies.
+#
+# The out_of_scope block is the more important half. A system that answers
+# everything scores well on the first block and is dangerous in practice, so
+# refusal precision is reported beside routing accuracy, never instead of it.
+
+in_scope:
+  # --- transcripts -------------------------------------------------------
+  - q: "How do I request an official transcript?"
+    expected_office: aad
+    expected_service: transcript_standard
+  - q: "How much does a transcript cost?"
+    expected_office: aad
+  - q: "Can I get my transcript the same day?"
+    expected_office: aad
+    expected_service: transcript_express
+  - q: "I need a transcript urgently before 11am"
+    expected_office: aad
+    expected_service: transcript_express
+  - q: "I graduated in 1994, how do I get my transcript?"
+    expected_office: aad
+    expected_service: transcript_pre_1996
+  - q: "I finished my masters, where do I request my transcript?"
+    expected_office: sgs
+    expected_service: transcript_graduate
+  - q: "Can my brother collect my transcript for me?"
+    expected_office: aad
+    expected_service: transcript_proxy_collection
+  - q: "How do I get a transcript posted to a university abroad?"
+    expected_office: aad
+  - q: "What do I need to bring to collect a transcript for someone else?"
+    expected_office: aad
+    expected_service: transcript_proxy_collection
+
+  # --- registration ------------------------------------------------------
+  - q: "How do I register for my courses this semester?"
+    expected_office: aad
+  - q: "I am a fresh student, how do I do online registration?"
+    expected_office: aad
+    expected_service: registration_freshman
+  - q: "How much of my fees must I pay before I can register?"
+    expected_office: aad
+  - q: "Where do I print my proof of registration?"
+    expected_office: aad
+  - q: "I am a level 300 student, how do I register?"
+    expected_office: aad
+
+  # --- fees --------------------------------------------------------------
+  - q: "How much are the fees for my programme?"
+    expected_office: aad
+    expected_service: fees_schedule
+  - q: "Where do I find the schedule of fees?"
+    expected_office: aad
+    expected_service: fees_schedule
+
+  # --- records and examinations -----------------------------------------
+  - q: "Where do I check my results?"
+    expected_office: mis_web
+    expected_service: check_results
+  - q: "My grade is wrong, how do I get it corrected?"
+    expected_office: aad
+    expected_service: grade_change
+  - q: "When is the examination timetable released?"
+    expected_office: sts_portal
+    expected_service: exam_timetable
+  - q: "Where can I find my exam timetable?"
+    expected_office: sts_portal
+    expected_service: exam_timetable
+
+  # --- courses -----------------------------------------------------------
+  - q: "What are the prerequisites for this course?"
+    expected_office: ugbs_admin
+    expected_service: course_information
+  - q: "How many credits do I need to graduate?"
+    expected_office: ugbs_admin
+  - q: "Who is my academic advisor?"
+    expected_office: ugbs_admin
+    expected_service: course_information
+
+  # --- paraphrase, no shared keywords with the catalogue -----------------
+  - q: "I want to take a year off from school"
+    expected_office: aad
+    expected_service: deferment
+  - q: "I want to stop my studies completely"
+    expected_office: aad
+    expected_service: withdrawal
+
+  # --- now answered from SYNTHETIC procedures ----------------------------
+  # These were in out_of_scope while nothing published covered them. The project
+  # team has since authored the procedures, clearly labelled, so the correct
+  # behaviour is now to answer rather than refuse. Moving them keeps the gold set
+  # honest: leaving them below would score a correct answer as a failure.
+  - q: "How do I get my student ID card?"
+    expected_office: aad
+    expected_service: student_id_card
+  - q: "I lost my student ID card, how do I replace it?"
+    expected_office: aad
+    expected_service: student_id_card
+  - q: "When is the next congregation?"
+    expected_office: aad
+    expected_service: graduation
+  - q: "How do I apply to graduate?"
+    expected_office: aad
+    expected_service: graduation
+  - q: "Who do I talk to about accommodation problems?"
+    expected_office: ugbs_admin
+    expected_service: welfare_support
+  - q: "I am having personal difficulties affecting my studies, who can help?"
+    expected_office: ugbs_admin
+    expected_service: welfare_support
+
+# Every one of these must be refused. Each probes a different failure mode:
+# a year we do not hold, a procedure nobody published, a topic outside the
+# university entirely, and a question that invites a confident guess.
+out_of_scope:
+  - q: "What will the 2027/2028 MBA fee be?"
+    why: "fee year outside the indexed schedule"
+  - q: "How much will fees be in 2030?"
+    why: "fee year outside the indexed schedule"
+  - q: "What is the fee for the 2019/2020 academic year?"
+    why: "fee year outside the indexed schedule"
+  - q: "Where is the best jollof on Legon campus?"
+    why: "not an administrative enquiry"
+  - q: "Who won the Ghana Premier League?"
+    why: "not a university matter"
+  - q: "Can you write my assignment for me?"
+    why: "not a service this system provides"
+  - q: "Will I pass my exams this semester?"
+    why: "invites a confident guess with no basis"

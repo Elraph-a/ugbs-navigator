@@ -1,0 +1,326 @@
+@import "tailwindcss";
+
+/*
+  UGBS Service Navigator — agent interface.
+
+  A conversational assistant that shows its work. The agent's real steps stream
+  from the backend, so the progress you see is the control flow, not an
+  animation timed to look busy.
+
+  Colour stays functional underneath the polish: viridian for verified and
+  interactive, ochre for unpublished or ageing sources, oxide for refusals.
+*/
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-sunk: var(--sunk);
+  --color-shell: var(--shell);
+  --color-shell-2: var(--shell-2);
+  --color-shell-ink: var(--shell-ink);
+  --color-shell-muted: var(--shell-muted);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-oxide: var(--oxide);
+  --color-oxide-soft: var(--oxide-soft);
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+}
+
+:root {
+  --canvas: #f6f8f7;
+  --surface: #ffffff;
+  --raised: #ffffff;
+  --sunk: #eef1f0;
+
+  --shell: #101d19;
+  --shell-2: #1a2d27;
+  --shell-ink: #eef3f1;
+  --shell-muted: #9db5ac;
+
+  --ink: #0d1513;
+  --muted: #55635e;
+  --faint: #7d8a85;
+  --line: #e4e8e6;
+  --line-soft: #eef1ef;
+
+  --accent: #0e7c66;
+  --accent-ink: #0a5c4c;
+  --accent-soft: #e6f2ee;
+
+  --amber: #8d5b00;
+  --amber-soft: #fbf1de;
+
+  --oxide: #a4341c;
+  --oxide-soft: #fbeae5;
+
+  --shadow-sm: 0 1px 2px rgb(13 21 19 / 0.05), 0 1px 3px rgb(13 21 19 / 0.04);
+  --shadow-md: 0 2px 4px rgb(13 21 19 / 0.04), 0 10px 28px rgb(13 21 19 / 0.07);
+  --shadow-lg: 0 4px 8px rgb(13 21 19 / 0.05), 0 20px 48px rgb(13 21 19 / 0.10);
+
+  /* Entering elements start fast, so the interface feels answerable. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+* {
+  border-color: var(--line);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+/* Browser surfaces carry the design too. These ship with defaults belonging to
+   no design system, and theming them is the cheapest evidence of real craft. */
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+:root {
+  caret-color: var(--accent);
+  accent-color: var(--accent);
+  scrollbar-color: #c8d2ce transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c8d2ce;
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a7b5b0;
+  background-clip: content-box;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+a {
+  color: inherit;
+}
+
+/* See withCedi() in components/Prose.tsx. */
+.cedi {
+  font-weight: 400;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- motion -- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slip {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Nothing appears from nothing: entrances start from a visible scale. */
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sweep {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* The cursor at the end of an answer being written. It stays solid while text
+   is arriving and only blinks in the pauses, the way a real caret does. */
+@keyframes blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  55%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.16em;
+  border-radius: 1px;
+  background: var(--accent);
+  animation: blink 1s steps(1) infinite;
+}
+
+.rise {
+  animation: rise 380ms var(--ease-out) both;
+}
+.slip {
+  animation: slip 260ms var(--ease-out) both;
+}
+.pop {
+  animation: pop 300ms var(--ease-out) both;
+}
+
+/* The one place a shimmer earns its keep: the agent is genuinely working. */
+.working {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 20%,
+    var(--accent) 40%,
+    var(--accent) 60%,
+    var(--muted) 80%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sweep 2.2s linear infinite;
+}
+
+.dot {
+  animation: breathe 1.4s var(--ease-in-out) infinite;
+}
+
+.press {
+  transition: transform 140ms var(--ease-out), background-color 140ms ease,
+    border-color 140ms ease, box-shadow 140ms ease, color 140ms ease;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hoverable:hover {
+    background: var(--sunk);
+  }
+  .hoverable-shell:hover {
+    background: var(--shell-2);
+  }
+}
+
+/* Reduced motion keeps opacity and colour, drops movement. */
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .slip,
+  .pop {
+    animation: slip 1ms both;
+  }
+  .working {
+    animation: none;
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--muted);
+  }
+  .dot,
+  .caret {
+    animation: none;
+    opacity: 0.7;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+  }
+}
+
+/* --------------------------------------------------------------- prose ---- */
+
+.prose-answer {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.prose-answer strong {
+  font-weight: 600;
+}
+.prose-answer p + p {
+  margin-top: 0.75rem;
+}

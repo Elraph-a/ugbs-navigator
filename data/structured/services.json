@@ -1,0 +1,575 @@
+{
+  "_README": [
+    "Service catalogue: what a UGBS student can ask for, who owns it, and what it takes.",
+    "Hand-transcribed from published sources. Fees, rooms and turnarounds here are",
+    "quoted verbatim - see CLAUDE.md section 3.",
+    "",
+    "`documented: false` means we found no published procedure. The system still",
+    "routes the student to the right office, but it must NOT invent the steps. Those",
+    "services are what the knowledge-gap register on the dashboard is built to surface:",
+    "they are the real finding of this project, not a hole to be quietly filled in."
+  ],
+  "services": [
+    {
+      "id": "transcript_standard",
+      "name": "Request an official transcript",
+      "category": "transcripts",
+      "office": "aad",
+      "documented": true,
+      "channel": "STS portal",
+      "aliases": [
+        "transcript",
+        "official transcript",
+        "academic transcript",
+        "my results document",
+        "statement of results",
+        "academic record copy"
+      ],
+      "steps": [
+        "Check that your academic record is correct on the student MIS portal before applying.",
+        "Submit the request and payment on the STS portal at https://sts.ug.edu.gh.",
+        "Track the status of the request on the same portal.",
+        "Collect when the request is marked Completed, or receive it at the email address you gave."
+      ],
+      "fees": [
+        {
+          "mode": "Physical copy, pick up at AAD",
+          "first_copy": "GH₵30",
+          "additional": "GH₵25 each, up to 10 copies"
+        },
+        {
+          "mode": "Physical copy, Post Office delivery within Ghana",
+          "first_copy": "GH₵85 (includes delivery)",
+          "additional": "GH₵25 each up to 10 copies; beyond 10 copies pick-up only"
+        },
+        {
+          "mode": "Physical copy, courier outside Ghana",
+          "first_copy": "US$55 or cedi equivalent",
+          "additional": "US$5 each"
+        },
+        {
+          "mode": "Digital copy, online delivery",
+          "first_copy": "US$10 or cedi equivalent",
+          "additional": null
+        }
+      ],
+      "turnaround": null,
+      "turnaround_note": "Not stated for the standard service; track the request on the STS portal.",
+      "source": "transcript_request",
+      "location": "Room D2, Academic Affairs Directorate",
+      "location_source": "transcript_request"
+    },
+    {
+      "id": "transcript_express",
+      "name": "Request an express (same-day) transcript",
+      "category": "transcripts",
+      "office": "aad",
+      "documented": true,
+      "channel": "In person - Cash Office then Room D2",
+      "aliases": [
+        "express transcript",
+        "urgent transcript",
+        "same day transcript",
+        "transcript quickly",
+        "rush transcript"
+      ],
+      "eligibility": "Requests must be submitted before 11:00 AM.",
+      "steps": [
+        "Submit the request before 11:00 AM - express requests are not available on the STS portal.",
+        "Pay at the Cash Office.",
+        "Submit the receipt at Room D2, Academic Affairs Directorate."
+      ],
+      "fees": [
+        {
+          "mode": "Express same-day, pick up at AAD",
+          "first_copy": "GH₵60",
+          "additional": null
+        }
+      ],
+      "turnaround": "Typically ready within 24 hours",
+      "source": "transcript_request",
+      "supersedes": [
+        "transcript_standard"
+      ],
+      "supersedes_note": "The standard STS-portal route does not apply to this student, so offering it alongside would send them to a portal that will reject them.",
+      "location": "Room D2, Academic Affairs Directorate",
+      "location_source": "transcript_request"
+    },
+    {
+      "id": "transcript_pre_1996",
+      "name": "Request a transcript for a pre-1996 graduate",
+      "category": "transcripts",
+      "office": "aad",
+      "documented": true,
+      "channel": "In person - Cash Office then Room D2",
+      "aliases": [
+        "old transcript",
+        "graduated before 1996",
+        "pre-1996 transcript",
+        "graduated in the 1990s",
+        "old records"
+      ],
+      "eligibility": "Applies to students who graduated before 1996. They cannot use the STS portal.",
+      "steps": [
+        "Do not use the STS portal - it does not cover pre-1996 graduates.",
+        "Pay for the transcript at the Cash Office.",
+        "Submit the receipt at Room D2, Academic Affairs Directorate for processing."
+      ],
+      "fees": [],
+      "fees_note": "The published rate table does not separate pre-1996 requests; confirm the amount at the Cash Office.",
+      "turnaround": "Ready for collection within two weeks",
+      "source": "transcript_request",
+      "supersedes": [
+        "transcript_standard"
+      ],
+      "supersedes_note": "The standard STS-portal route does not apply to this student, so offering it alongside would send them to a portal that will reject them.",
+      "location": "Room D2, Academic Affairs Directorate",
+      "location_source": "transcript_request"
+    },
+    {
+      "id": "transcript_graduate",
+      "name": "Request a graduate (postgraduate) transcript",
+      "category": "transcripts",
+      "office": "sgs",
+      "documented": true,
+      "channel": "Email to the School of Graduate Studies",
+      "aliases": [
+        "graduate transcript",
+        "masters transcript",
+        "mphil transcript",
+        "phd transcript",
+        "postgraduate transcript",
+        "mba transcript"
+      ],
+      "eligibility": "Applies to graduate students. Graduate transcripts are processed by the School of Graduate Studies, not the AAD.",
+      "steps": [
+        "Contact the School of Graduate Studies at sgstranscript@ug.edu.gh.",
+        "Graduate transcripts are processed there rather than at the Academic Affairs Directorate."
+      ],
+      "fees": [],
+      "fees_note": "Not published on the AAD rate table; confirm with the School of Graduate Studies.",
+      "turnaround": null,
+      "source": "transcript_request",
+      "supersedes": [
+        "transcript_standard"
+      ],
+      "supersedes_note": "The standard STS-portal route does not apply to this student, so offering it alongside would send them to a portal that will reject them."
+    },
+    {
+      "id": "transcript_proxy_collection",
+      "name": "Collect a transcript on someone else's behalf",
+      "category": "transcripts",
+      "office": "aad",
+      "documented": true,
+      "channel": "In person at AAD",
+      "aliases": [
+        "brother collect",
+        "collect for me",
+        "collect for someone",
+        "my brother",
+        "my sister",
+        "on my behalf",
+        "pick up for me",
+        "pick up for my friend",
+        "proxy collection",
+        "someone collect my transcript",
+        "someone else collect my transcript"
+      ],
+      "steps": [
+        "Bring a letter of consent from the transcript owner.",
+        "Bring a valid ID card of the transcript owner.",
+        "Bring a valid ID card of the proxy, the person collecting.",
+        "Present all three documents at the time of collection."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "source": "transcript_request",
+      "location": "Room D2, Academic Affairs Directorate",
+      "location_source": "transcript_request"
+    },
+    {
+      "id": "registration_freshman",
+      "name": "Register as a fresh student",
+      "category": "registration",
+      "office": "aad",
+      "documented": true,
+      "channel": "MIS Web",
+      "aliases": [
+        "course registration",
+        "first time registration",
+        "fresh student registration",
+        "level 100 registration",
+        "new student registration",
+        "register for my courses"
+      ],
+      "steps": [
+        "Pay at least the required minimum of your academic fee.",
+        "Get your UG Student ID Number and UG 5-digit PIN from your provisional admission letter.",
+        "Activate your UG-assigned email account.",
+        "Log in to MIS Web and open Registration under the Student iEnabler.",
+        "Click Submit Registration, then the blue letters under Qualification Code, and select Register for This Qualification.",
+        "Click Save and Continue to view your selected courses.",
+        "Click Continue to view the registration cost, then Accept Registration to complete it.",
+        "Click Printer Friendly Format and print your proof of registration."
+      ],
+      "fees": [],
+      "fees_note": "Registration requires partial payment of academic fees; see the Schedule of Fees for your programme.",
+      "turnaround": null,
+      "source": "freshmen_registration"
+    },
+    {
+      "id": "registration_continuing",
+      "name": "Register as a continuing student",
+      "category": "registration",
+      "office": "aad",
+      "documented": true,
+      "channel": "MIS Web",
+      "aliases": [
+        "cannot access mis web",
+        "continuing registration",
+        "course registration",
+        "deadline for course registration",
+        "level 200 registration",
+        "level 300 registration",
+        "level 400 registration",
+        "proof of registration",
+        "register for courses",
+        "register for my courses",
+        "register this semester",
+        "semester registration"
+      ],
+      "steps": [
+        "Pay the required portion of your academic fees for the semester.",
+        "Log in to MIS Web and complete course registration under the Student iEnabler.",
+        "Print your proof of registration once the registration is accepted."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "source": "continuing_students"
+    },
+    {
+      "id": "grade_change",
+      "name": "Request a grade change",
+      "category": "results_and_records",
+      "office": "aad",
+      "documented": true,
+      "channel": "Change of grade form",
+      "aliases": [
+        "change my grade",
+        "corrected",
+        "get it corrected",
+        "grade correction",
+        "grade is wrong",
+        "missing grade",
+        "my grade is wrong",
+        "result is wrong",
+        "wrong grade"
+      ],
+      "steps": [
+        "Obtain the change of grade form from the Academic Affairs Directorate.",
+        "The request is initiated and endorsed by the teaching department, not by the student alone."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "source": "change_grade_form"
+    },
+    {
+      "id": "fees_schedule",
+      "name": "Find out what fees I have to pay",
+      "category": "fees_and_finance",
+      "office": "aad",
+      "documented": true,
+      "channel": "Published fee schedule",
+      "time_varying": true,
+      "data_year": "2025/2026",
+      "time_varying_note": "Fees are republished every academic year. We hold one year only, so a question about any other year must be refused rather than answered from the year we have.",
+      "aliases": [
+        "academic fees",
+        "cost of my programme",
+        "cost of programme",
+        "fee for my programme",
+        "fee schedule",
+        "fees for my programme",
+        "find the fees",
+        "how much are fees",
+        "how much do i pay",
+        "mba fee",
+        "overpaid",
+        "pay in instalments",
+        "programme fee",
+        "refund",
+        "schedule of fees",
+        "school fees",
+        "tuition",
+        "where are the fees"
+      ],
+      "steps": [
+        "Open the Schedule of Fees for your college and academic year.",
+        "UGBS students are in the College of Humanities, so use the College of Humanities fee schedule.",
+        "Fees differ for Ghanaian and international students, and by level and programme."
+      ],
+      "fees": [],
+      "fees_note": "Specific amounts are in the fee schedule document for the relevant academic year. The system quotes only the year it holds.",
+      "turnaround": null,
+      "source": "humanities_fees_2025_26"
+    },
+    {
+      "id": "exam_timetable",
+      "name": "Find the examination timetable",
+      "category": "examinations",
+      "office": "sts_portal",
+      "documented": true,
+      "channel": "STS portal",
+      "aliases": [
+        "defer an examination",
+        "exam timetable",
+        "examination malpractice",
+        "examination schedule",
+        "examination timetable",
+        "exams date",
+        "missed an examination",
+        "pass mark",
+        "when is my exam",
+        "when is the exam timetable released"
+      ],
+      "steps": [
+        "Open the examination timetable on the STS portal at https://sts.ug.edu.gh/timetable."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "source": "aad_home"
+    },
+    {
+      "id": "deferment",
+      "name": "Defer a semester or academic year",
+      "category": "deferment_and_withdrawal",
+      "office": "aad",
+      "documented": true,
+      "channel": "Deferment application form",
+      "aliases": [
+        "break from school",
+        "defer",
+        "defer a semester",
+        "deferment",
+        "interrupt my studies",
+        "leave of absence",
+        "medical reasons",
+        "postpone my studies",
+        "take a year off",
+        "what happens to my fees if I defer"
+      ],
+      "steps": [
+        "Obtain a deferment application form from the Academic Affairs Directorate or your department office.",
+        "Complete it, stating your grounds and the exact period you wish to defer.",
+        "Attach supporting documents — medical grounds need a report from the University Hospital or a recognised facility.",
+        "Have the form endorsed by your Head of Department.",
+        "Submit it to the Academic Affairs Directorate for a decision.",
+        "Collect the written approval and keep it; you need it to resume."
+      ],
+      "fees": [],
+      "turnaround": "A decision is normally communicated within four weeks",
+      "source": "syn_deferment",
+      "provenance": "synthetic",
+      "synthetic_note": "Procedure authored by the project team. No published University source was found for it. Shown to students with a synthetic-source badge.",
+      "eligibility": "A student in good standing, on documented grounds such as ill health, financial hardship or bereavement."
+    },
+    {
+      "id": "withdrawal",
+      "name": "Withdraw from the University",
+      "category": "deferment_and_withdrawal",
+      "office": "aad",
+      "documented": true,
+      "channel": "Letter to the Registrar",
+      "aliases": [
+        "drop out",
+        "leave school permanently",
+        "leave the university",
+        "quit school",
+        "stop my studies",
+        "stop my studies completely",
+        "stop studying",
+        "withdraw",
+        "withdrawal"
+      ],
+      "steps": [
+        "Write to the Registrar through your Head of Department, stating your intention to withdraw and the effective date.",
+        "Have the letter endorsed by your Head of Department.",
+        "Obtain clearance from the Library, your hall of residence and the Finance Directorate.",
+        "Submit the endorsed letter and clearance form to the Academic Affairs Directorate.",
+        "Collect written acknowledgement for your records."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "source": "syn_withdrawal",
+      "provenance": "synthetic",
+      "synthetic_note": "Procedure authored by the project team. No published University source was found for it. Shown to students with a synthetic-source badge.",
+      "caveat": "Consider deferment first if the difficulty is temporary — withdrawal ends studentship and returning means reapplying for admission."
+    },
+    {
+      "id": "student_id_card",
+      "name": "Get or replace a student ID card",
+      "category": "student_id",
+      "office": "aad",
+      "documented": true,
+      "channel": "ID card office",
+      "aliases": [
+        "collect my student id",
+        "id card",
+        "lost my id",
+        "replace id card",
+        "replacement id",
+        "student card",
+        "student id",
+        "student identification card"
+      ],
+      "steps": [
+        "Complete online registration on MIS Web — card production is triggered by a completed registration.",
+        "Attend the biometric capture session for your college, bringing your admission letter and a national ID.",
+        "Collect the card from the issuing point for your college, normally within three weeks.",
+        "To replace a lost card: report the loss, pay the replacement charge at the Cash Office, and submit the receipt with a replacement request form."
+      ],
+      "fees": [],
+      "turnaround": "Around three weeks for a new card, two weeks for a replacement",
+      "source": "syn_student_id",
+      "provenance": "synthetic",
+      "synthetic_note": "Procedure authored by the project team. No published University source was found for it. Shown to students with a synthetic-source badge.",
+      "caveat": "The GH₵50 replacement charge in this prototype is an illustrative placeholder chosen by the project team, not an official University fee."
+    },
+    {
+      "id": "graduation",
+      "name": "Graduation and congregation",
+      "category": "graduation",
+      "office": "aad",
+      "documented": true,
+      "channel": "Department and Academic Affairs Directorate",
+      "aliases": [
+        "apply to graduate",
+        "certificate",
+        "certificate collection",
+        "collect my certificate",
+        "congregation",
+        "graduate ceremony",
+        "graduating requirements",
+        "graduation",
+        "requirements for graduating",
+        "when do I graduate"
+      ],
+      "steps": [
+        "Confirm on MIS Web at the end of your final semester that no grade is missing or incomplete.",
+        "Raise any missing grade with your department immediately, through the change of grade process.",
+        "Obtain financial clearance from the Finance Directorate.",
+        "Complete library and hall clearance.",
+        "Confirm your name appears on the provisional graduation list published by your department."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "source": "syn_graduation",
+      "provenance": "synthetic",
+      "synthetic_note": "Procedure authored by the project team. No published University source was found for it. Shown to students with a synthetic-source badge.",
+      "caveat": "A student with outstanding fees may be left off the congregation list even when the academic requirements are met."
+    },
+    {
+      "id": "course_information",
+      "name": "Find course information for a UGBS programme",
+      "category": "course_advising",
+      "office": "ugbs_admin",
+      "documented": true,
+      "channel": "College handbook and department",
+      "aliases": [
+        "academic advisor",
+        "change my elective",
+        "course content",
+        "course description",
+        "course outline",
+        "courses available",
+        "credit requirement",
+        "credits",
+        "credits do i need",
+        "credits to graduate",
+        "elective",
+        "how many credits",
+        "prerequisite",
+        "prerequisites for this course",
+        "programme structure",
+        "what courses"
+      ],
+      "steps": [
+        "Check the course description in the College of Humanities student handbook, UGBS section.",
+        "Credit and programme requirements for your degree are set out in the same handbook.",
+        "For advice specific to your situation, contact your department in the Business School."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "caveat": "The indexed handbook is dated 2017, so confirm current requirements with your department.",
+      "source": "humanities_handbook"
+    },
+    {
+      "id": "check_results",
+      "name": "Check examination results",
+      "category": "results_and_records",
+      "office": "mis_web",
+      "documented": true,
+      "channel": "MIS Web",
+      "aliases": [
+        "check my results",
+        "where do I check results",
+        "see my results",
+        "view results",
+        "result is not showing",
+        "missing result",
+        "statement of results",
+        "my grades",
+        "check grades"
+      ],
+      "steps": [
+        "Log in to MIS Web with your student credentials.",
+        "Open your academic record to view results for the semester.",
+        "If a result is missing or looks wrong, the correction is raised by the teaching department using the change of grade process."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "source": "change_grade_form"
+    },
+    {
+      "id": "welfare_support",
+      "name": "Find the right student support service",
+      "category": "welfare_and_support",
+      "office": "ugbs_admin",
+      "documented": true,
+      "provenance": "synthetic",
+      "channel": "Dean of Student Affairs and specialist units",
+      "aliases": [
+        "accommodation problem",
+        "hostel problem",
+        "counselling",
+        "counseling",
+        "mental health",
+        "financial hardship",
+        "cannot afford fees",
+        "personal difficulties",
+        "harassment",
+        "someone to talk to",
+        "student support",
+        "welfare",
+        "feeling overwhelmed",
+        "stressed",
+        "sick",
+        "medical",
+        "ill"
+      ],
+      "steps": [
+        "For personal, emotional or mental health difficulty, contact the University Counselling Centre, and tell your academic advisor if it is affecting your work.",
+        "For hall accommodation problems, start with the Hall Administration or Senior Tutor.",
+        "For financial hardship, approach the Students Financial Aid Office before the registration deadline, and put any payment arrangement with the Finance Directorate in writing.",
+        "For illness, use the University Hospital — its medical report is the supporting document other procedures ask for.",
+        "For harassment, discrimination or misconduct, report to the Dean of Student Affairs.",
+        "If you are unsure which applies, the Dean of Student Affairs is the general entry point and will refer you onward."
+      ],
+      "fees": [],
+      "turnaround": null,
+      "source": "syn_welfare",
+      "synthetic_note": "Routing guide authored by the project team; no consolidated published guide was found.",
+      "introduced_with_synthetic_data": true
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+# Source manifest for the UGBS Service Navigator knowledge base.
+#
+# Every entry is a published University of Ghana or UGBS source. `tools/collect_sources.py`
+# fetches these into data/raw/ and writes data/raw/SOURCES.md with access dates.
+#
+# Adding a source: give it a stable id, a real title, the category it serves, and the
+# publication date if the page states one. Leave published_date null when unknown -- the
+# dashboard measures how much of our corpus is undated or old, and guessing corrupts that.
+#
+# `authority: primary` means the office that owns the procedure published it. Prefer
+# primary sources; a secondary source may be indexed but is ranked below a primary one.
+#
+# Sources that fail are recorded in SOURCES.md rather than removed, so the gap stays
+# visible. The old1.ug.edu.gh mirror serves a navigation-only shell for these pages and
+# was dropped after the extraction quality gate caught it.
+
+sources:
+  # --- Transcripts ---------------------------------------------------------
+  - id: transcript_request
+    title: "Transcript Requests and Payment"
+    url: https://www.ug.edu.gh/aad/resources/academic-support-services/transcript-request
+    category: transcripts
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  # --- Registration --------------------------------------------------------
+  - id: registration_general
+    title: "Registration"
+    url: https://www.ug.edu.gh/aad/resources/registration
+    category: registration
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: freshmen_registration
+    title: "Registration and Studentship Matters - Freshmen"
+    url: https://www.ug.edu.gh/aad/resources/freshmen-info
+    category: registration
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: continuing_students
+    title: "Continuing Students"
+    url: https://www.ug.edu.gh/aad/resources/continuing-students
+    category: registration
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: academic_calendar
+    title: "Academic Calendar"
+    url: https://www.ug.edu.gh/academics/calendar
+    category: registration
+    publisher: "University of Ghana"
+    authority: primary
+    published_date: null
+    note: "Kept in the manifest even though it is JavaScript-rendered, so the gap is recorded."
+
+  - id: graduate_calendar
+    title: "Graduate Studies Academic Calendar 2025/2026"
+    url: https://sgs.ug.edu.gh/sites/sgs.ug.edu.gh/files/2025-09/Graduate%20Studies%20-%202025%20-%202026%20Academic%20Calendar.pdf
+    category: registration
+    publisher: "School of Graduate Studies, University of Ghana"
+    authority: primary
+    published_date: "2025-09"
+
+  # --- Fees ----------------------------------------------------------------
+  - id: schedule_of_fees
+    title: "Schedule of Fees"
+    url: https://www.ug.edu.gh/aad/schedule-fees
+    category: fees_and_finance
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: humanities_fees_2025_26
+    title: "Schedule of Academic Fees 2025/2026 - College of Humanities"
+    url: https://www.ug.edu.gh/aad/sites/academic.ug.edu.gh/files/2025-12/2025-26%20COLLEGE%20OF%20HUMANITIES%20FEES.pdf
+    category: fees_and_finance
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: "2025-12"
+    note: "UGBS sits in the College of Humanities, so this is the fee schedule that applies to our students."
+
+  # --- Records and examinations --------------------------------------------
+  - id: change_grade_form
+    title: "Grade Change Request"
+    url: https://www.ug.edu.gh/aad/resources/academic-support-services/change-grade-form
+    category: results_and_records
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: junior_member_regulations
+    title: "General Regulations for Junior Members"
+    url: https://www.ug.edu.gh/sites/default/files/UG_Regulations_for_Junior_Members-2017.pdf
+    category: examinations
+    publisher: "University of Ghana"
+    authority: primary
+    published_date: "2017"
+
+  - id: graduate_faqs
+    title: "Frequently Asked Questions"
+    url: https://sgs.ug.edu.gh/faqs
+    category: results_and_records
+    publisher: "School of Graduate Studies, University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: aad_home
+    title: "Academic Affairs Directorate"
+    url: https://www.ug.edu.gh/aad
+    category: results_and_records
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  # --- Handbooks and regulations -------------------------------------------
+  - id: student_handbook_index
+    title: "Student Handbook"
+    url: https://www.ug.edu.gh/academics/student-handbook
+    category: welfare_and_support
+    publisher: "University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: humanities_handbook
+    title: "College of Humanities Student Handbook - UGBS section"
+    url: https://www.ug.edu.gh/sites/default/files/manual_uploads/Humanities%20Handbook%202017.pdf
+    category: course_advising
+    publisher: "College of Humanities, University of Ghana"
+    authority: primary
+    published_date: "2017"
+    note: >
+      UGBS sits in the College of Humanities. The handbook covers every school in the
+      college, so only the UGBS section is indexed -- Law, Languages, Performing Arts and
+      the rest are out of scope for this project and would swamp retrieval.
+    extract:
+      start: "UNIVERSITY OF GHANA BUSINESS SCHOOL"
+      end: "SCHOOL OF LANGUAGES"
+
+  # --- UGBS ----------------------------------------------------------------
+  - id: ugbs_home
+    title: "University of Ghana Business School"
+    url: https://ugbs.ug.edu.gh/
+    category: course_advising
+    publisher: "University of Ghana Business School"
+    authority: primary
+    published_date: null
+
+  - id: ugbs_how_to_apply
+    title: "How To Apply"
+    url: https://ugbs.ug.edu.gh/how-apply
+    category: admissions
+    publisher: "University of Ghana Business School"
+    authority: primary
+    published_date: null
