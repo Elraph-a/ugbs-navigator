@@ -1,6 +1,6 @@
 ---
 id: syn_graduation
-title: "Graduation and Congregation — procedure (SYNTHETIC)"
+title: "Graduation and Congregation procedure (SYNTHETIC)"
 category: graduation
 provenance: synthetic
 publisher: "Authored by the project team — not a University of Ghana publication"

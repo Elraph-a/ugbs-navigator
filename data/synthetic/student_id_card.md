@@ -1,6 +1,6 @@
 ---
 id: syn_student_id
-title: "Student Identity Card — issue and replacement (SYNTHETIC)"
+title: "Student Identity Card issue and replacement (SYNTHETIC)"
 category: student_id
 provenance: synthetic
 publisher: "Authored by the project team — not a University of Ghana publication"

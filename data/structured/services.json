@@ -361,7 +361,7 @@
       "steps": [
         "Obtain a deferment application form from the Academic Affairs Directorate or your department office.",
         "Complete it, stating your grounds and the exact period you wish to defer.",
-        "Attach supporting documents — medical grounds need a report from the University Hospital or a recognised facility.",
+        "Attach supporting documents. Medical grounds need a report from the University Hospital or a recognised facility.",
         "Have the form endorsed by your Head of Department.",
         "Submit it to the Academic Affairs Directorate for a decision.",
         "Collect the written approval and keep it; you need it to resume."
@@ -403,7 +403,7 @@
       "source": "syn_withdrawal",
       "provenance": "synthetic",
       "synthetic_note": "Procedure authored by the project team. No published University source was found for it. Shown to students with a synthetic-source badge.",
-      "caveat": "Consider deferment first if the difficulty is temporary — withdrawal ends studentship and returning means reapplying for admission."
+      "caveat": "Consider deferment first if the difficulty is temporary, because withdrawal ends studentship and returning means reapplying for admission."
     },
     {
       "id": "student_id_card",
@@ -423,7 +423,7 @@
         "student identification card"
       ],
       "steps": [
-        "Complete online registration on MIS Web — card production is triggered by a completed registration.",
+        "Complete online registration on MIS Web, since card production is triggered by a completed registration.",
         "Attend the biometric capture session for your college, bringing your admission letter and a national ID.",
         "Collect the card from the issuing point for your college, normally within three weeks.",
         "To replace a lost card: report the loss, pay the replacement charge at the Cash Office, and submit the receipt with a replacement request form."
@@ -561,7 +561,7 @@
         "For personal, emotional or mental health difficulty, contact the University Counselling Centre, and tell your academic advisor if it is affecting your work.",
         "For hall accommodation problems, start with the Hall Administration or Senior Tutor.",
         "For financial hardship, approach the Students Financial Aid Office before the registration deadline, and put any payment arrangement with the Finance Directorate in writing.",
-        "For illness, use the University Hospital — its medical report is the supporting document other procedures ask for.",
+        "For illness, use the University Hospital. Its medical report is the supporting document other procedures ask for.",
         "For harassment, discrimination or misconduct, report to the Dean of Student Affairs.",
         "If you are unsure which applies, the Dean of Student Affairs is the general entry point and will refer you onward."
       ],

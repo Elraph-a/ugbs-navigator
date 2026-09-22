@@ -310,7 +310,7 @@ function TurnFooter({ response, text }: { response: AnswerResponse; text: string
       {response.escalated && (
         <span className="flex items-center gap-1.5 text-[0.75rem] text-oxide">
           <Alert className="size-3.5" />
-          No published source — recorded for the admin team
+          No published source, so this was recorded for the admin team
         </span>
       )}
 
@@ -347,8 +347,9 @@ function Welcome({ onPick }: { onPick: (q: string) => void }) {
         className="rise max-w-[54ch] pt-3 text-[0.9375rem] leading-relaxed text-muted"
         style={{ animationDelay: "60ms" }}
       >
-        Registration, transcripts, fees, results, deferment, ID cards, graduation —
-        ask in your own words and ask follow-ups; I keep track of the conversation.
+        Ask about registration, transcripts, fees, results, deferment, ID cards or
+        graduation in your own words, and ask follow-ups too. I keep track of the
+        conversation.
         Every answer comes from published University of Ghana documents with the
         source shown, and when nothing published covers it, I will say so rather
         than guess.

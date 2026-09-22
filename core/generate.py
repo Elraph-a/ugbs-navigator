@@ -232,7 +232,7 @@ def reply_stream(
 
     written = False
     try:
-        for piece in _stream_provider(messages, max_tokens, temperature, fast):
+        for piece in undash_stream(_stream_provider(messages, max_tokens, temperature, fast)):
             written = True
             yield piece
         if not written:
@@ -250,6 +250,70 @@ def reply_stream(
         else:
             meta["provider"] = f"extractive (fell back: {type(exc).__name__})"
             yield fallback
+
+
+# --------------------------------------------------------------------------
+# Punctuation
+#
+# Replies should read as natural sentences, without em dashes. The prompt says
+# so, but models copy the punctuation of the text they are given -- the corpus
+# holds a hundred em dashes -- and lists come back as "**Label** – text". So
+# the model's words are cleaned on the way out. Only model output: quoted
+# passages and the no-model fallback are never altered.
+# --------------------------------------------------------------------------
+
+_DASHES = "–—"
+_BOLD_DASH = re.compile(r"\*\*[ \t]*[–—][ \t]*")     # "**Label** – text"
+# A range: "10 – 12", "8am – 5pm", "Monday – Friday". Read as "to", not a pause.
+# A tight en dash ("1–3") is the ordinary way to write a range and stays.
+_RANGE_DASH = re.compile(
+    r"(\d|[ap]\.?m\.?|day)"
+    r"(?:[ \t]+[–—][ \t]*|[ \t]*[–—][ \t]+|—)"
+    r"(\d|mon|tue|wed|thu|fri|sat|sun)",
+    re.IGNORECASE,
+)
+_LINE_DASH = re.compile(r"(?m)^([ \t]*)[–—][ \t]+")    # a dash used as a bullet
+_SPACED_DASH = re.compile(r"[ \t]*[–—][ \t]+|[ \t]+[–—][ \t]*")
+_TIGHT_EM = re.compile(r"(\w)—(\w)")                        # "fees—including"
+
+
+def undash(text: str) -> str:
+    """Turn dashes used as punctuation into the punctuation they stand for.
+
+    Number ranges written without spaces ("1–3") are left alone.
+    """
+    text = _BOLD_DASH.sub("**: ", text)
+    text = _RANGE_DASH.sub(r"\1 to \2", text)
+    text = _LINE_DASH.sub(r"\1- ", text)
+    text = _SPACED_DASH.sub(", ", text)
+    return _TIGHT_EM.sub(r"\1, \2", text)
+
+
+def _safe_cut(text: str) -> int:
+    """The last point where the stream can be cut without splitting a dash
+    pattern: just after whitespace, where the next character is not a dash and
+    the last visible character before it is neither a dash nor bold markup."""
+    for i in range(len(text) - 1, 0, -1):
+        if not text[i - 1].isspace() or text[i].isspace() or text[i] in _DASHES:
+            continue
+        before = text[:i].rstrip()
+        if before and before[-1] not in _DASHES and before[-1] != "*":
+            return i
+    return 0
+
+
+def undash_stream(pieces: Iterator[str]) -> Iterator[str]:
+    """`undash`, applied to a stream. Holds back only the few characters after
+    the last safe cut, so the reply still appears word by word."""
+    pending = ""
+    for piece in pieces:
+        pending += piece
+        cut = _safe_cut(pending)
+        if cut:
+            yield undash(pending[:cut])
+            pending = pending[cut:]
+    if pending:
+        yield undash(pending)
 
 
 # --------------------------------------------------------------------------

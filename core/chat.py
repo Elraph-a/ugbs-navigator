@@ -76,8 +76,8 @@ student may refer back to something said earlier.
 - Answer the actual question in your first sentence. Be concise. Use a numbered \
 list for steps and short paragraphs otherwise. Bold only the one or two facts \
 that matter most.
-- Every University fact — offices, rooms, phone numbers, emails, fees, dates, \
-deadlines, processing times, documents required, steps — must come from the \
+- Every University fact (offices, rooms, phone numbers, emails, fees, dates, \
+deadlines, processing times, documents required and steps) must come from the \
 MATERIAL attached to the latest message. Never use outside knowledge for these, \
 never guess, and never carry over a figure that is not in the material.
 - Cite the passages you rely on as [1], [2]: a number in square brackets and \
@@ -91,11 +91,21 @@ is an illustrative guide written for this project, not an official University \
 publication.
 - Never predict how an individual student will do. Never answer questions \
 outside University administration.
-- Stop when the answer is complete. No filler closing lines."""
+- Stop when the answer is complete. No filler closing lines.
+- Write in natural, flowing sentences. Never use em dashes or en dashes as \
+punctuation. Use a comma, a full stop, a colon or brackets instead, or rephrase \
+so the sentence reads smoothly."""
+
+# The same writing rule, for conversational and off-topic replies.
+_STYLE = """
+
+Write in natural, flowing sentences. Never use em dashes or en dashes as \
+punctuation. Use a comma, a full stop, a colon or brackets instead, or rephrase \
+so the sentence reads smoothly."""
 
 SYSTEM_CHAT = IDENTITY + """
 
-This message is conversational — a greeting, thanks, goodbye, small talk, or a \
+This message is conversational: a greeting, thanks, goodbye, small talk, or a \
 question about you. Reply naturally in one to three short sentences and, where it \
 fits, invite the student to ask about a procedure.
 
@@ -108,7 +118,7 @@ questions work; and a few procedures (deferment, withdrawal, ID cards, \
 graduation, student support) are illustrative guides written for this project.
 
 Do not state any University fees, offices, contacts, dates or procedures in this \
-reply."""
+reply.""" + _STYLE
 
 OFF_TOPIC_NOTE = """
 
@@ -133,8 +143,8 @@ follow-ups to earlier answers ("how much is it?", "what about graduates?") and \
 requests to predict the student's own results.
 - "chat": greetings, thanks, goodbyes, small talk, or questions about the \
 assistant itself.
-- "off_topic": asks for information or help unrelated to the University — sport, \
-food, entertainment, general knowledge, doing assignments.
+- "off_topic": asks for information or help unrelated to the University, such as \
+sport, food, entertainment, general knowledge or doing assignments.
 
 query: the latest message rewritten as one complete, self-contained question, \
 using the conversation to resolve words like "it", "that", "there" or "what \
@@ -245,13 +255,13 @@ def format_material(material: dict) -> str:
             if procedure["status"] != "ok":
                 lines += [
                     "",
-                    f"### {service['name']} — NOT AVAILABLE",
+                    f"### {service['name']}: NOT AVAILABLE",
                     f"Reason: {procedure['note']}",
                 ]
                 continue
 
             source = (
-                "SYNTHETIC — written by the project team, not an official University publication"
+                "SYNTHETIC: written by the project team, not an official University publication"
                 if service.get("provenance") == "synthetic"
                 else "published University source"
             )
@@ -269,7 +279,7 @@ def format_material(material: dict) -> str:
                 lines += [f"{i}. {step}" for i, step in enumerate(service["steps"], start=1)]
             for fee in service.get("fees") or []:
                 extra = f"; additional copies: {fee['additional']}" if fee.get("additional") else ""
-                lines.append(f"Fee — {fee['mode']}: {fee['first_copy']}{extra}")
+                lines.append(f"Fee ({fee['mode']}): {fee['first_copy']}{extra}")
             for key, label in (
                 ("fees_note", "Fees note"),
                 ("turnaround", "How long"),
@@ -291,11 +301,11 @@ def format_material(material: dict) -> str:
             heading = hit.get("section") or hit["doc_title"]
             dated = f", published {hit['published_date']}" if hit.get("published_date") else ""
             synthetic = (
-                " — SYNTHETIC, written by the project team"
+                " (SYNTHETIC, written by the project team)"
                 if hit.get("provenance") == "synthetic"
                 else ""
             )
-            lines.append(f"[{index}] {hit['doc_title']} — {heading}{dated}{synthetic}\n{hit['text']}")
+            lines.append(f"[{index}] {hit['doc_title']}, {heading}{dated}{synthetic}\n{hit['text']}")
 
     if material["escalated"]:
         lines += [
@@ -316,7 +326,7 @@ def extractive_answer(material: dict) -> str:
     """
     if material["prediction"]:
         return (
-            "I can't predict how an individual student will do — I only hold "
+            "I can't predict how an individual student will do, because I only hold "
             "published University procedure. For academic guidance, speak to your "
             "department or academic advisor."
         )
@@ -326,7 +336,7 @@ def extractive_answer(material: dict) -> str:
         service = procedure["service"]
         if procedure["status"] != "ok":
             if service:
-                parts += [f"**{service['name']}** — {procedure['note']}", ""]
+                parts += [f"**{service['name']}**: {procedure['note']}", ""]
             continue
         if service and service.get("steps"):
             parts.append(f"**{service['name']}**")
@@ -433,14 +443,14 @@ def _converse(
 
 UNVERIFIED_REPLY = (
     "I can't confirm that's something I can answer from University documents right "
-    "now. I answer questions about UGBS administrative procedures — registration, "
-    "transcripts, fees, results, examinations, deferment, ID cards, graduation and "
-    "student support. Try asking about one of those directly."
+    "now. I answer questions about UGBS administrative procedures, such as "
+    "registration, transcripts, fees, results, examinations, deferment, ID cards, "
+    "graduation and student support. Try asking about one of those directly."
 )
 
 UNVERIFIED_FOLLOW_UP_REPLY = (
     "I couldn't work out what that follow-up refers to just now. Please ask the full "
-    "question — for example, “How much does an official transcript cost?”"
+    "question, for example: “How much does an official transcript cost?”"
 )
 
 
@@ -603,7 +613,7 @@ def run_chat(messages: list[dict]) -> Iterator[dict]:
     if query != latest:
         user_content += f"\n\n(Standalone form of this question: {query})"
     user_content += (
-        "\n\n---\nMATERIAL FOR THIS MESSAGE — the only source of University facts "
+        "\n\n---\nMATERIAL FOR THIS MESSAGE, the only source of University facts "
         f"you may use:\n\n{format_material(material)}"
     )
 
@@ -624,7 +634,7 @@ def run_chat(messages: list[dict]) -> Iterator[dict]:
     citations = used_citations(text, passages) if passages else []
 
     if material["escalated"]:
-        write_detail, tone = "no verified source — recorded for the admin team", "refused"
+        write_detail, tone = "no verified source, so this was recorded for the admin team", "refused"
     elif citations:
         write_detail = f"{len(citations)} source{'' if len(citations) == 1 else 's'} cited"
         tone = "verified"

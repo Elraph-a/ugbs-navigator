@@ -113,7 +113,7 @@ REASON_GROUPS: list[tuple[str, str, str, str]] = [
         "prediction",
         "asks the system to predict",
         "Requests to predict a student's own result",
-        "Nothing to publish — no document can answer these. Point students to "
+        "There is nothing to publish, because no document can answer these. Point students to "
         "academic advising.",
     ),
 ]

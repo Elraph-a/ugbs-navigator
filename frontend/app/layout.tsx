@@ -28,11 +28,11 @@ for verified and interactive, ochre for ageing sources, oxide for refusals. Arch
 tabular figures, authored stroke icons.
 STORY: A student asks in their own words, watches the agent place the enquiry and
 search published documents, then gets numbered steps, the fee table, the office to
-visit and the sources — or a plain refusal and the office to contact.
+visit and the sources, or else a plain refusal and the office to contact.
 FIRST VIEWPORT: Shell left, conversation centred at 46rem, greeting and four real
 enquiries as cards, composer resting at the bottom with the privacy line beneath it.
-FORM: Conversational agent interface. Operate mode, from the use scene — a phone, in
-daylight, in a corridor.
+FORM: Conversational agent interface. Operate mode, designed for the real use scene:
+a phone, in daylight, in a corridor.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 `;
 

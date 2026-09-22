@@ -127,7 +127,7 @@ function Inline({ text }: { text: string }) {
             <sup
               key={i}
               className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-soft px-1 text-[0.625rem] font-semibold text-accent-ink tabular"
-              title="Cited source — see Sources below"
+              title="Cited source. See Sources below."
             >
               {part.slice(1, -1)}
             </sup>

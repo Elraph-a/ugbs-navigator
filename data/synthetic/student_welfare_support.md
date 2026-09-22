@@ -1,6 +1,6 @@
 ---
 id: syn_welfare
-title: "Student Welfare and Support Services — where to go (SYNTHETIC)"
+title: "Where to go for student welfare and support (SYNTHETIC)"
 category: welfare_and_support
 provenance: synthetic
 publisher: "Authored by the project team — not a University of Ghana publication"

@@ -74,7 +74,7 @@ function Report({ data }: { data: Dashboard }) {
             Service demand
           </h1>
           <p className="text-[0.75rem] text-faint tabular">
-            {summary.date_range[0]?.slice(0, 10)} — {summary.date_range[1]?.slice(0, 10)}
+            {summary.date_range[0]?.slice(0, 10)} to {summary.date_range[1]?.slice(0, 10)}
           </p>
         </div>
         <p className="max-w-[66ch] pt-3 text-[0.9375rem] leading-relaxed text-muted">
@@ -93,8 +93,8 @@ function Report({ data }: { data: Dashboard }) {
           enquiries here are simulated from a modelled semester, generated for the
           prototype.{" "}
           {summary.live === 1 ? "One is real." : `${summary.live.toLocaleString()} are real.`}{" "}
-          Routing and escalation for every row — simulated or not — were produced by
-          the live system, not assigned by hand.
+          Every row, simulated or real, was routed and escalated by the live system
+          rather than labelled by hand.
         </span>
       </p>
 
@@ -125,12 +125,13 @@ function Report({ data }: { data: Dashboard }) {
       <Panel
         icon={<Doc className="size-4" />}
         title="What to publish next"
-        decision="Decides which documents the administrative unit should write first — and which unanswered questions need no document at all."
+        decision="Decides which documents the administrative unit should write first, and which unanswered questions need no document at all."
       >
         <p className="max-w-[68ch] pb-4 text-[0.875rem] leading-relaxed text-muted">
-          Every question the Navigator could not answer, grouped by why — because each
-          reason calls for a different action — then by what was asked. This list
-          exists only because the system refuses rather than guessing.
+          Every question the Navigator could not answer, grouped first by the reason it
+          went unanswered, since each reason calls for a different action, and then by
+          what was asked. This list exists only because the system refuses rather than
+          guessing.
         </p>
 
         {data.knowledge_gaps.length === 0 ? (
@@ -404,8 +405,8 @@ function LoopPanel({ loop }: { loop: GapLoop }) {
       {loop.rerouted.map((move) => (
         <p key={move.from + move.to} className="pt-4 text-[0.75rem] leading-relaxed text-faint">
           {move.enquiries} questions the old catalogue sent to “{move.from}” now go to “
-          {move.to}” — for example “{move.example}”. The “before” figure for “{move.from}”
-          overstates its demand by that many.
+          {move.to}”, such as “{move.example}”. That means the “before” figure for “
+          {move.from}” overstates its demand by that many.
         </p>
       ))}
 
@@ -413,9 +414,9 @@ function LoopPanel({ loop }: { loop: GapLoop }) {
         <Alert className="mt-px size-4 shrink-0" />
         <span>
           The procedures that closed these gaps were written by the project team, not
-          published by the University. This demonstrates the mechanism — the register
-          names the gap, the gap is filled, unanswered enquiries fall. In practice the
-          University would have to publish them.
+          published by the University. What this demonstrates is the mechanism: the
+          register names a gap, the gap is filled, and unanswered enquiries fall. In
+          practice, the University would have to publish them.
         </span>
       </p>
     </Panel>

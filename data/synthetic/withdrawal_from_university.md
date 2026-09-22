@@ -1,6 +1,6 @@
 ---
 id: syn_withdrawal
-title: "Withdrawal from the University — procedure (SYNTHETIC)"
+title: "Withdrawal from the University procedure (SYNTHETIC)"
 category: deferment_and_withdrawal
 provenance: synthetic
 publisher: "Authored by the project team — not a University of Ghana publication"

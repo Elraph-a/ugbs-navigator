@@ -84,7 +84,7 @@ CAPABILITY = re.compile(
 
 GREETING_REPLY = (
     "Hello. I answer questions about University of Ghana Business School "
-    "administrative procedures — registration, transcripts, fees, results, "
+    "administrative procedures, such as registration, transcripts, fees, results, "
     "examinations, deferment, student ID cards, graduation and student support.\n\n"
     "Ask in your own words and I will tell you which office handles it, what to "
     "bring, and which document says so. If nothing published covers your question, "
@@ -96,7 +96,7 @@ GREETING_REPLY = (
 )
 
 CAPABILITY_REPLY = (
-    "I am an enquiry assistant for UGBS students, built for a student project — "
+    "I am an enquiry assistant for UGBS students, built as a student project. I am "
     "not an official University service.\n\n"
     "I search published University of Ghana documents: the General Regulations for "
     "Junior Members, the College of Humanities handbook, Academic Affairs "
@@ -115,8 +115,9 @@ THANKS_REPLY = "You're welcome. Ask me anything else about UGBS procedures."
 FAREWELL_REPLY = "Goodbye. Come back whenever you need an administrative procedure."
 OFF_TOPIC_REPLY = (
     "That is outside what I can help with. I answer questions about University of "
-    "Ghana Business School administrative procedures — registration, transcripts, "
-    "fees, results, examinations, deferment, ID cards, graduation and student support."
+    "Ghana Business School administrative procedures, such as registration, "
+    "transcripts, fees, results, examinations, deferment, ID cards, graduation and "
+    "student support."
 )
 
 

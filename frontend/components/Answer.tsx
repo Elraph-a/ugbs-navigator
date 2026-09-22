@@ -231,8 +231,8 @@ function ProcedureMaterial({ section, index }: { section: Section; index: number
       <div className="px-4 pb-3">
         {synthetic && (
           <p className="pt-1.5 text-[0.75rem] leading-relaxed text-amber">
-            Written by the project team — no published University procedure was found
-            for this. Illustrative only.
+            Written by the project team, because no published University procedure
+            was found for this. Illustrative only.
           </p>
         )}
 
@@ -303,7 +303,7 @@ function FeeTable({
           <li key={i} className="rounded-sm border border-line px-3 py-2.5">
             <p className="text-[0.8125rem] font-medium leading-snug">{fee.mode}</p>
             <p className="pt-1 text-[0.9375rem] font-semibold tabular">
-              {withCedi(fee.first_copy ?? "—")}
+              {withCedi(fee.first_copy ?? "Not listed")}
             </p>
             {fee.additional && (
               <p className="pt-0.5 text-[0.75rem] leading-relaxed text-muted tabular">
@@ -328,10 +328,10 @@ function FeeTable({
               <tr key={i}>
                 <td className="px-3 py-2 leading-snug">{fee.mode}</td>
                 <td className="whitespace-nowrap px-3 py-2 font-semibold tabular">
-                  {withCedi(fee.first_copy ?? "—")}
+                  {withCedi(fee.first_copy ?? "Not listed")}
                 </td>
                 <td className="px-3 py-2 leading-snug text-muted tabular">
-                  {withCedi(fee.additional ?? "—")}
+                  {withCedi(fee.additional ?? "Not listed")}
                 </td>
               </tr>
             ))}

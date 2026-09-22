@@ -1,6 +1,6 @@
 ---
 id: syn_deferment
-title: "Deferment of Studies — procedure (SYNTHETIC)"
+title: "Deferment of Studies procedure (SYNTHETIC)"
 category: deferment_and_withdrawal
 provenance: synthetic
 publisher: "Authored by the project team — not a University of Ghana publication"
