@@ -40,3 +40,6 @@ docs/evaluation-*.md
 # OS
 Thumbs.db
 .DS_Store
+
+# Embedding model downloaded on first use when EMBEDDING_CACHE points here
+.cache/

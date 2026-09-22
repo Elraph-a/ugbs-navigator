@@ -47,9 +47,14 @@ front of an audience:
 
 ## Edge cases and things learned
 
-- **Backend startup takes 60–90 seconds.** It warms the embedding model on purpose,
-  so the first student question is not an 80-second hang. Wait for
-  `Application startup complete` before opening the browser.
+- **Backend startup takes a few seconds.** It warms the embedding model on purpose,
+  so the first student question does not pay for loading it. Wait for
+  `Application startup complete` before opening the browser. (It was 60–90 seconds
+  while embeddings ran on PyTorch; the ONNX build removed that.)
+- **Check `/health` before a demo.** `"status": "degraded"` means vector search is
+  down and retrieval has fallen back to keywords — the confidence gate is then
+  unreliable. From 19 to 22 September an unreadable index did exactly this, silently.
+  Fix: `tools/build_index.py --from-chunks`, then restart the backend.
 - **Use `npm start`, not `npm run dev`, for the demo.** The dev server's watcher and
   HMR cost RAM the demo laptop cannot spare (5.5 GB free before Chroma, the model,
   Node and a browser).

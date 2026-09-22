@@ -1,0 +1,37 @@
+# Render Blueprint for the API server (free web service).
+#
+# Render builds from the GitHub repository. Everything slow happens at build
+# time: the embedding model downloads into the project directory (which is kept
+# for runtime, unlike the home directory), the passages are embedded, and the
+# simulated semester is seeded so the dashboard has data from the first request.
+#
+# Two values are secrets and are entered in the Render dashboard, never here:
+# GROQ_API_KEY, and CORS_ORIGINS once the frontend's address is known.
+
+services:
+  - type: web
+    name: ugbs-navigator-api
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: >-
+      pip install -r requirements.txt &&
+      python tools/build_index.py --from-chunks &&
+      python tools/seed_enquiries.py --reset
+    startCommand: python -m uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: EMBEDDING_CACHE
+        value: /opt/render/project/src/.cache/onnx
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: GROQ_FAST_MODEL
+        value: openai/gpt-oss-20b
+      - key: GROQ_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false

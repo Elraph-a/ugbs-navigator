@@ -164,23 +164,19 @@ def build_chunks() -> list[dict]:
 
 def embed_and_store(chunks: list[dict]) -> None:
     import chromadb
-    from sentence_transformers import SentenceTransformer
+
+    from core.embed import embed
 
     # A stale collection silently serves deleted documents, so rebuild cleanly.
     if config.CHROMA.exists():
         shutil.rmtree(config.CHROMA)
     config.CHROMA.mkdir(parents=True, exist_ok=True)
 
-    print(f"\nLoading embedding model {config.settings.embedding_model}")
-    model = SentenceTransformer(config.settings.embedding_model)
-
     texts = [c["embed_text"] for c in chunks]
-    print(f"Embedding {len(texts):,} chunks on CPU - this is the slow step")
+    print(f"\nEmbedding {len(texts):,} chunks with {config.settings.embedding_model} (ONNX, CPU)")
 
     started = time.time()
-    vectors = model.encode(
-        texts, batch_size=32, show_progress_bar=True, convert_to_numpy=True
-    )
+    vectors = embed(texts)
     elapsed = time.time() - started
     print(f"Embedded in {elapsed:.0f}s ({len(texts)/max(elapsed,1):.0f} chunks/s)")
 

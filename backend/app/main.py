@@ -55,14 +55,14 @@ async def lifespan(app: FastAPI):
     if purged:
         print(f"Purged {purged} enquiries past the {config.settings.retention_days}-day retention window")
 
-    # Warm the embedding model now rather than inside the first request. On this
-    # hardware a cold load costs about 80 seconds, which would look like a hang
-    # in the middle of a demo.
+    # Warm the embedding model now rather than inside the first request, so the
+    # first question in a demo is not the one that pays for loading it.
     try:
-        from core.retrieve import _embedder, load_chunks
+        from core import embed
+        from core.retrieve import load_chunks
 
         load_chunks()
-        _embedder().encode(["warm up"])
+        embed.warm()
         print("Embedding model and chunk index loaded")
     except Exception as exc:  # noqa: BLE001
         print(f"Warm-up skipped: {type(exc).__name__}: {exc}")
@@ -214,12 +214,19 @@ def _stream(messages: list[dict]) -> StreamingResponse:
 
 @app.get("/health")
 def health() -> dict:
+    from core.retrieve import vector_status
+
     available, reason = config.settings.provider_is_available
+    vectors, vector_note = vector_status()
     return {
-        "status": "ok",
+        # "degraded" when retrieval has fallen back to keywords: it still
+        # answers, but the confidence gate cannot be trusted.
+        "status": "ok" if vectors else "degraded",
         "provider": config.settings.llm_provider,
         "provider_available": available,
         "provider_note": reason,
+        "vector_search": vectors,
+        "vector_note": vector_note,
         "enquiries": store.count(),
     }
 

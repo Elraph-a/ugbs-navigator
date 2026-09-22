@@ -1,16 +1,13 @@
 # What the API server needs to run. Versions are the ones the project was built
 # and evaluated with.
 #
-# The Dockerfile installs torch from PyTorch's CPU-only index first, which keeps
-# the image a fraction of the size of the default CUDA build.
+# No PyTorch: embeddings use the ONNX build of all-MiniLM-L6-v2 that chromadb
+# ships (onnxruntime and tokenizers come with it). See core/embed.py.
 
 fastapi==0.141.1
 uvicorn==0.52.1
 pydantic==2.12.5
 chromadb==1.1.1
-sentence-transformers==5.6.1
-transformers==5.14.1
-torch==2.13.0
 openai==2.52.0
 PyYAML==6.0.3
 scikit-learn==1.9.0

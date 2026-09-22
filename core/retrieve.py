@@ -15,9 +15,11 @@ from __future__ import annotations
 import json
 import math
 import re
+import sys
 from functools import lru_cache
 
 from core import config
+from core.embed import embed
 
 # Reciprocal-rank fusion constant. 60 is the value from the original RRF paper and
 # behaves well here: it keeps a strong hit in one ranker from being outvoted by a
@@ -32,13 +34,6 @@ def load_chunks() -> list[dict]:
             f"{config.CHUNKS_FILE} not found - run tools/build_index.py first"
         )
     return json.loads(config.CHUNKS_FILE.read_text(encoding="utf-8"))
-
-
-@lru_cache(maxsize=1)
-def _embedder():
-    from sentence_transformers import SentenceTransformer
-
-    return SentenceTransformer(config.settings.embedding_model)
 
 
 @lru_cache(maxsize=1)
@@ -89,9 +84,38 @@ def keyword_search(question: str, top_k: int) -> list[tuple[int, float]]:
     return scored[:top_k]
 
 
+_vector_error: str | None = None
+
+
+def _report_vector_failure(exc: Exception) -> None:
+    global _vector_error
+    message = f"{type(exc).__name__}: {exc}"[:300]
+    if message != _vector_error:
+        print(
+            f"WARNING: vector search failed; answering from keyword search only, "
+            f"and the confidence gate is unreliable until fixed. {message}\n"
+            f"Rebuild the index: python tools/build_index.py --from-chunks",
+            file=sys.stderr,
+        )
+    _vector_error = message
+
+
+def vector_status() -> tuple[bool, str]:
+    """Whether vector search works right now. Used by /health and the evaluation,
+    so a keyword-only system cannot pass for the full one."""
+    global _vector_error
+    try:
+        vector_search("transcript", 1)
+        _vector_error = None
+        return True, ""
+    except Exception as exc:  # noqa: BLE001
+        _report_vector_failure(exc)
+        return False, _vector_error or ""
+
+
 def vector_search(question: str, top_k: int) -> list[tuple[str, float]]:
     """Cosine similarity over the Chroma index. Returns (chunk_id, similarity)."""
-    vector = _embedder().encode([question], convert_to_numpy=True)[0].tolist()
+    vector = embed([question])[0].tolist()
     result = _collection().query(query_embeddings=[vector], n_results=top_k)
 
     ids = result["ids"][0]
@@ -116,9 +140,13 @@ def retrieve(question: str, top_k: int | None = None) -> dict:
 
     try:
         vector_hits = vector_search(question, pool)
-    except Exception:
+    except Exception as exc:  # noqa: BLE001
         # No index yet, or Chroma failed to open. Keyword search alone still
-        # answers, which keeps the pipeline usable rather than dead.
+        # answers, which keeps the pipeline usable rather than dead -- but it
+        # must not be silent. From 19 September this path swallowed an
+        # unreadable index for two days: every enquiry scored 1.0, the
+        # confidence gate stopped firing, and nothing said so.
+        _report_vector_failure(exc)
         vector_hits = []
 
     keyword_hits = keyword_search(question, pool)

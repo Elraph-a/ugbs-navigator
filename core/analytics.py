@@ -189,8 +189,6 @@ def _themes(group: list[dict]) -> list[dict]:
     """
     if all(row.get("service_id") for row in group):
         return _themes_by_service(group)
-    from sklearn.cluster import KMeans
-    from sklearn.feature_extraction.text import TfidfVectorizer
 
     normalised = [_normalise_question(r["question"]) for r in group]
     distinct = len(set(normalised))
@@ -216,6 +214,12 @@ def _themes(group: list[dict]) -> list[dict]:
         )
 
     k = 1 if distinct < 6 else min(5, distinct // 4)
+
+    # Imported only when there is wording to cluster. scikit-learn costs about
+    # 120 MB of memory just to import, which is a quarter of the free hosting
+    # tier -- and most registers never reach this line.
+    from sklearn.cluster import KMeans
+    from sklearn.feature_extraction.text import TfidfVectorizer
 
     try:
         vectoriser = TfidfVectorizer(

@@ -325,15 +325,27 @@ def main() -> int:
         else f"evaluation-{Path(args.gold).stem.replace('_questions', '')}.md"
     )
 
+    from core import embed
     from core.generate import warm
-    from core.retrieve import _embedder, load_chunks
+    from core.retrieve import load_chunks
 
     # The server loads the embedding model and opens its model connections at
     # start-up, so the measurement must too. Without this the first question
-    # carries the ~19s embedding load and reads as a 44s answer.
+    # carries the embedding load and reads as a 44s answer.
     load_chunks()
-    _embedder().encode(["warm up"])
+    embed.warm()
     warm()
+
+    # A keyword-only run measures a broken index, not the system: the held-out
+    # run of 19 September happened while the index was unreadable, and nothing
+    # flagged it because this check did not exist.
+    from core.retrieve import vector_status
+
+    ok, note = vector_status()
+    if not ok:
+        print(f"NOT RUN: vector search is unavailable ({note}).")
+        print("Rebuild the index with tools/build_index.py --from-chunks, then re-run.")
+        return 1
 
     started = time.time()
     results = evaluate(log=not args.no_log, gold_file=args.gold, pace=args.pace)

@@ -39,8 +39,10 @@ npm --prefix frontend start
 
 Frontend on `http://localhost:3000`, API on `http://localhost:8000`.
 
-Backend startup takes 60–90 seconds: it loads the embedding model at boot so the
-first question is not slow. Wait for `Application startup complete`.
+Backend startup takes a few seconds: it loads the embedding model at boot so the
+first question is not slow. Wait for `Application startup complete`. `GET /health`
+reports `"status": "degraded"` if vector search is unavailable — rebuild the index
+with `tools/build_index.py --from-chunks`.
 
 ## Layout
 
@@ -74,20 +76,20 @@ Local model inference was measured at 1–3 minutes per answer on the target har
 
 ## Deploy
 
-The API runs as a Hugging Face Docker Space; the frontend on Vercel.
+The API runs on Render's free tier (`render.yaml`); the frontend on Vercel.
 
-```powershell
-..\AI_Lab\Scripts\python.exe tools\deploy_backend.py --dry-run          # list what would be uploaded
-..\AI_Lab\Scripts\python.exe tools\deploy_backend.py --cors https://<app>.vercel.app
-```
+- **Render:** New → Blueprint → this repository. Enter `GROQ_API_KEY` when asked, and
+  `CORS_ORIGINS` (the Vercel address) once the frontend exists. The build installs
+  dependencies, embeds the passages and seeds the simulated semester.
+- **Vercel:** import the repository with root directory `frontend/` and set
+  `NEXT_PUBLIC_API_BASE` to the Render URL.
 
-Needs `HF_TOKEN` and `GROQ_API_KEY` in `.env`. The key is stored as a Space secret,
-not uploaded. The image embeds the passages and seeds the simulated semester at
-build time (`deploy/huggingface/Dockerfile`). Its disk is not persistent: enquiries
-logged on the hosted API are lost when the Space restarts.
+The free tier sleeps after 15 minutes idle; a scheduled request to `/health` every
+10 minutes keeps it awake. Its disk is not persistent: enquiries logged on the
+hosted API are lost on restart or redeploy.
 
-On Vercel, set the project root to `frontend/` and `NEXT_PUBLIC_API_BASE` to the
-Space URL.
+Embeddings use the ONNX build of all-MiniLM-L6-v2 bundled with Chroma rather than
+PyTorch, so the server fits in 512 MB (about 280 MB measured).
 
 ## Tests and evaluation
 
