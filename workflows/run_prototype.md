@@ -55,6 +55,11 @@ front of an audience:
   down and retrieval has fallen back to keywords — the confidence gate is then
   unreliable. From 19 to 22 September an unreadable index did exactly this, silently.
   Fix: `tools/build_index.py --from-chunks`, then restart the backend.
+- **Stop the backend before rebuilding the index.** On Windows the running server
+  holds the index files open. Rebuilding underneath it used to delete some files and
+  fail on a locked one, leaving an unreadable index: the likely cause of the
+  19 September failure. The builder now refuses and changes nothing while the files
+  are in use.
 - **Use `npm start`, not `npm run dev`, for the demo.** The dev server's watcher and
   HMR cost RAM the demo laptop cannot spare (5.5 GB free before Chroma, the model,
   Node and a browser).

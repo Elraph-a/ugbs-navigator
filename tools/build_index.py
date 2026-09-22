@@ -168,8 +168,24 @@ def embed_and_store(chunks: list[dict]) -> None:
     from core.embed import embed
 
     # A stale collection silently serves deleted documents, so rebuild cleanly.
+    #
+    # Move the old index aside before deleting it. On Windows a running backend
+    # holds the index files open: deleting in place removed some files, failed on
+    # a locked one, and left an index that later reads could not open -- the
+    # likely cause of the silent keyword-only fallback from 19 September. A
+    # rename is all-or-nothing, so if the files are in use nothing is touched.
     if config.CHROMA.exists():
-        shutil.rmtree(config.CHROMA)
+        aside = config.CHROMA.with_name(config.CHROMA.name + ".old")
+        if aside.exists():
+            shutil.rmtree(aside, ignore_errors=True)
+        try:
+            config.CHROMA.rename(aside)
+        except PermissionError:
+            raise SystemExit(
+                f"{config.CHROMA} is in use - stop the backend first, then re-run. "
+                "Nothing was changed."
+            )
+        shutil.rmtree(aside, ignore_errors=True)
     config.CHROMA.mkdir(parents=True, exist_ok=True)
 
     texts = [c["embed_text"] for c in chunks]
