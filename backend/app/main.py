@@ -95,9 +95,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Local development origins are always allowed; a deployment adds its own
-# frontend address, e.g. CORS_ORIGINS=https://ugbs-navigator.vercel.app
-_origins = ["http://localhost:3000", "http://127.0.0.1:3000"] + [
+# Local development and the hosted frontend are always allowed; CORS_ORIGINS
+# adds more, comma-separated. Origins are public addresses, not secrets.
+_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://ugbs-navigator.vercel.app",
+] + [
     o.strip().rstrip("/") for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()
 ]
 
