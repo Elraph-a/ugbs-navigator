@@ -13,6 +13,7 @@ it is needed.
 from __future__ import annotations
 
 import re
+import time
 from collections.abc import Iterator
 from functools import lru_cache
 
@@ -41,12 +42,40 @@ def _groq_client():
     call paid a fresh TLS handshake to Groq each time -- measured at 6.7s on a
     cold first call, against 0.8s once the connection is open.
     """
+    import httpx
     from openai import OpenAI
 
     return OpenAI(
         api_key=config.settings.groq_api_key,
         base_url="https://api.groq.com/openai/v1",
+        # The SDK gives a connection five seconds to open. On this network a
+        # cold TLS handshake sometimes takes exactly that, and the request was
+        # abandoned and quietly answered from the offline fallback instead:
+        # nine of twenty answers in one evaluation run. Waiting twenty seconds
+        # for the connection, and two minutes for the reply, costs nothing when
+        # the network is healthy.
+        timeout=httpx.Timeout(120.0, connect=20.0),
     )
+
+
+def _once_more(call):
+    """Run a model call, and try a second time if the connection itself failed.
+
+    The SDK's own retries are switched off, because meeting a 429 by waiting
+    makes the student wait too, and handing over to the spare model is better.
+    A dropped or refused connection is a different thing: it is not the free
+    tier saying no, it is the network, and retrying once costs a fraction of a
+    second. Without it the enquiry falls back to the offline template and the
+    student silently gets a worse answer. One evaluation run lost 14 of 38
+    answers this way.
+    """
+    from openai import APIConnectionError  # APITimeoutError is a subclass
+
+    try:
+        return call()
+    except APIConnectionError:
+        time.sleep(0.6)
+        return call()
 
 
 def _groq_extra(model: str) -> dict:
@@ -101,11 +130,11 @@ def _stream_provider(
             )
 
         try:
-            stream = open_stream(primary)
+            stream = _once_more(lambda: open_stream(primary))
         except RateLimitError:
             if primary == spare:
                 raise
-            stream = open_stream(spare)
+            stream = _once_more(lambda: open_stream(spare))
 
         for chunk in stream:
             if not chunk.choices:
@@ -197,12 +226,15 @@ def complete(
         model = config.settings.groq_fast_model if fast else config.settings.groq_model
         # No silent retries: every caller of complete() has a deterministic
         # fallback, and using it beats waiting out a rate limit.
-        completion = _groq_client().with_options(max_retries=0).chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            **_groq_extra(model),
+        client = _groq_client().with_options(max_retries=0)
+        completion = _once_more(
+            lambda: client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                **_groq_extra(model),
+            )
         )
         return (completion.choices[0].message.content or "").strip()
 

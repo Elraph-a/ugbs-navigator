@@ -407,7 +407,7 @@ def architecture_diagram() -> tuple[str, str, list[Node], list[Edge], int, int]:
     box("chat", 120, 244, 340, 80, "Chat interface", "step",
         "Streamed reply, citations, office card, steps")
     box("dash", 560, 244, 340, 80, "Administrative dashboard", "step",
-        "Demand, gap register, deflection, forecast")
+        "Password protected. Demand, busiest hours, gap register, forecast")
 
     box("api", 440, 390, 660, 58, "FastAPI service", "step",
         "/chat/stream · /analytics · /services")

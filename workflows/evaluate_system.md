@@ -74,3 +74,19 @@ in isolation makes the system worse.
 - **Alias collisions are easy to create.** Adding "what courses" to course
   information broke "how do I register for my courses". After editing aliases,
   re-run this workflow before assuming the change was an improvement.
+- **A degraded run usually means the connection, not the free tier.** Three runs on
+  2026-09-26 were thrown away because answers came from the extractive fallback.
+  The messages said `APITimeoutError` and `APIConnectionError`, not `RateLimitError`.
+  Two separate causes, both now fixed in `core/generate.py`: the SDK was allowing a
+  connection five seconds to open, which a cold TLS handshake on this network
+  sometimes exceeds (`timeout=httpx.Timeout(120.0, connect=20.0)`), and a dropped
+  connection went straight to the fallback instead of being tried once more
+  (`_once_more`). Rate-limit failover to the spare model is deliberately *not*
+  retried, because waiting out a 429 makes the student wait.
+- **Check the network before starting a long run.** A few `complete()` calls in a
+  loop take seconds and show whether the host is answering: the first is around
+  7 s on a cold connection and the rest under a second. A run that starts while
+  the connection is flaky will waste fifteen minutes.
+- **Both sets are worth re-running together.** The report quotes the development
+  set and the held-out set side by side, so a valid held-out run beside a stale or
+  invalid development run is not a fair comparison.
