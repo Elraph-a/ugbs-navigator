@@ -109,7 +109,7 @@ scores perfectly on the other and is useless.
 
 - Office names, room numbers, fees, contacts and processing times come from
   `data/structured/` or a retrieved chunk. They are never produced by a language
-  model. See `CLAUDE.md` section 3.
+  model. A change that lets a model originate one of these facts is a defect.
 - Refusal is a designed behaviour, not an error path. It produces the knowledge-gap
   analytics. Treat a change that makes refusal less likely as a regression until
   proven otherwise.
