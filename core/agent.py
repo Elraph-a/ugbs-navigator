@@ -410,7 +410,14 @@ def resolve(query: str) -> Iterator[dict]:
         # Search on the service name when there is one: it is a cleaner query
         # than the student's sentence, which carries conditions that muddy
         # retrieval.
-        search_query = f"{service['name']}. {query}" if service else query
+        #
+        # Except for a service with no steps, which is a topic rather than a
+        # procedure. "Key dates in the academic calendar" pulled retrieval
+        # towards any calendar-like document, including the graduate one, and
+        # buried the page that actually answers "when is matriculation?".
+        search_query = (
+            f"{service['name']}. {query}" if service and service.get("steps") else query
+        )
 
         # The service name is the label rather than folded into a sentence: the
         # names start with a verb ("Request a graduate transcript"), so

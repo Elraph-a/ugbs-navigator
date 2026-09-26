@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from datetime import date
 from pathlib import Path
@@ -42,6 +43,26 @@ def fetch(url: str) -> tuple[bytes, str]:
     )
     response.raise_for_status()
     return response.content, response.headers.get("content-type", "").lower()
+
+
+def fetch_rendered(url: str) -> str:
+    """The page's HTML after its JavaScript has run.
+
+    Several University pages return a shell to a plain HTTP request: the
+    academic calendar and the general registration page both extracted as a
+    navigation menu and were recorded as failures. A real browser sees what a
+    student sees. Slower and heavier, so it is a fallback, never the first try.
+    """
+    result = subprocess.run(
+        ["node", str(config.PROJECT_ROOT / "tools" / "render_page.mjs"), url],
+        capture_output=True,
+        timeout=120,
+        text=True,
+        encoding="utf-8",
+    )
+    if result.returncode != 0:
+        raise ValueError(f"browser render failed: {result.stderr.strip()[:200]}")
+    return result.stdout
 
 
 def quality_problem(text: str) -> str:
@@ -111,7 +132,15 @@ def save_source(entry: dict, refresh: bool) -> dict:
         text = clean_text(html_to_text(body.decode("utf-8", errors="replace")))
         reject = quality_problem(text)
         if reject:
-            raise ValueError(reject)
+            # A shell rather than a page: try again with a browser before
+            # recording a failure.
+            print(f"  render   {source_id:<28} plain fetch gave a shell ({reject})")
+            rendered = clean_text(html_to_text(fetch_rendered(url)))
+            still_wrong = quality_problem(rendered)
+            if still_wrong:
+                raise ValueError(f"{reject}; after browser render: {still_wrong}")
+            text = rendered
+            record["fetched_with"] = "browser render"
         target.write_text(text, encoding="utf-8")
         size = len(text)
 

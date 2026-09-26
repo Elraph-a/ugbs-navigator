@@ -57,7 +57,8 @@
       "turnaround_note": "Not stated for the standard service; track the request on the STS portal.",
       "source": "transcript_request",
       "location": "Room D2, Academic Affairs Directorate",
-      "location_source": "transcript_request"
+      "location_source": "transcript_request",
+      "provenance": "real"
     },
     {
       "id": "transcript_express",
@@ -93,7 +94,8 @@
       ],
       "supersedes_note": "The standard STS-portal route does not apply to this student, so offering it alongside would send them to a portal that will reject them.",
       "location": "Room D2, Academic Affairs Directorate",
-      "location_source": "transcript_request"
+      "location_source": "transcript_request",
+      "provenance": "real"
     },
     {
       "id": "transcript_pre_1996",
@@ -124,7 +126,8 @@
       ],
       "supersedes_note": "The standard STS-portal route does not apply to this student, so offering it alongside would send them to a portal that will reject them.",
       "location": "Room D2, Academic Affairs Directorate",
-      "location_source": "transcript_request"
+      "location_source": "transcript_request",
+      "provenance": "real"
     },
     {
       "id": "transcript_graduate",
@@ -153,7 +156,8 @@
       "supersedes": [
         "transcript_standard"
       ],
-      "supersedes_note": "The standard STS-portal route does not apply to this student, so offering it alongside would send them to a portal that will reject them."
+      "supersedes_note": "The standard STS-portal route does not apply to this student, so offering it alongside would send them to a portal that will reject them.",
+      "provenance": "real"
     },
     {
       "id": "transcript_proxy_collection",
@@ -185,7 +189,8 @@
       "turnaround": null,
       "source": "transcript_request",
       "location": "Room D2, Academic Affairs Directorate",
-      "location_source": "transcript_request"
+      "location_source": "transcript_request",
+      "provenance": "real"
     },
     {
       "id": "registration_freshman",
@@ -215,7 +220,8 @@
       "fees": [],
       "fees_note": "Registration requires partial payment of academic fees; see the Schedule of Fees for your programme.",
       "turnaround": null,
-      "source": "freshmen_registration"
+      "source": "freshmen_registration",
+      "provenance": "real"
     },
     {
       "id": "registration_continuing",
@@ -245,7 +251,41 @@
       ],
       "fees": [],
       "turnaround": null,
-      "source": "continuing_students"
+      "source": "continuing_students",
+      "provenance": "real"
+    },
+    {
+      "id": "academic_calendar",
+      "name": "Key dates in the academic calendar",
+      "category": "registration",
+      "office": "aad",
+      "documented": true,
+      "source": "academic_calendar_l100",
+      "channel": "University academic calendar",
+      "aliases": [
+        "academic calendar",
+        "congregation date",
+        "important dates",
+        "inter-semester break",
+        "key dates",
+        "matriculation",
+        "orientation",
+        "registration begins",
+        "registration deadline",
+        "semester dates",
+        "semester start",
+        "teaching begins",
+        "vacation",
+        "when does school start",
+        "when does the semester start",
+        "when do lectures start"
+      ],
+      "steps": [],
+      "fees": [],
+      "data_year": "2025/2026",
+      "time_varying": true,
+      "provenance": "real",
+      "caveat": "Dates are those published for the 2025/2026 academic year. Check the calendar page for any revision."
     },
     {
       "id": "grade_change",
@@ -271,7 +311,8 @@
       ],
       "fees": [],
       "turnaround": null,
-      "source": "change_grade_form"
+      "source": "change_grade_form",
+      "provenance": "real"
     },
     {
       "id": "fees_schedule",
@@ -311,7 +352,8 @@
       "fees": [],
       "fees_note": "Specific amounts are in the fee schedule document for the relevant academic year. The system quotes only the year it holds.",
       "turnaround": null,
-      "source": "humanities_fees_2025_26"
+      "source": "humanities_fees_2025_26",
+      "provenance": "real"
     },
     {
       "id": "exam_timetable",
@@ -337,7 +379,8 @@
       ],
       "fees": [],
       "turnaround": null,
-      "source": "aad_home"
+      "source": "aad_home",
+      "provenance": "real"
     },
     {
       "id": "deferment",
@@ -345,7 +388,7 @@
       "category": "deferment_and_withdrawal",
       "office": "aad",
       "documented": true,
-      "channel": "Deferment application form",
+      "channel": "STS portal",
       "aliases": [
         "break from school",
         "defer",
@@ -359,19 +402,17 @@
         "what happens to my fees if I defer"
       ],
       "steps": [
-        "Obtain a deferment application form from the Academic Affairs Directorate or your department office.",
-        "Complete it, stating your grounds and the exact period you wish to defer.",
-        "Attach supporting documents. Medical grounds need a report from the University Hospital or a recognised facility.",
-        "Have the form endorsed by your Head of Department.",
-        "Submit it to the Academic Affairs Directorate for a decision.",
-        "Collect the written approval and keep it; you need it to resume."
+        "Log in to your STS account with your Student ID and PIN.",
+        "Go to Services and select the Deferment Form.",
+        "Complete all required fields and submit the form online.",
+        "When processing is complete, download and print your official approval letter from the portal."
       ],
       "fees": [],
-      "turnaround": "A decision is normally communicated within four weeks",
-      "source": "syn_deferment",
-      "provenance": "synthetic",
-      "synthetic_note": "Procedure authored by the project team. No published University source was found for it. Shown to students with a synthetic-source badge.",
-      "eligibility": "A student in good standing, on documented grounds such as ill health, financial hardship or bereavement."
+      "turnaround": null,
+      "source": "deferment_procedure",
+      "provenance": "real",
+      "eligibility": "Continuing students apply online. Newly admitted students must instead write to the Director of Academic Affairs at aad@ug.edu.gh before the matriculation date, having paid the first semester's fees.",
+      "caveat": "Deferment is limited to two semesters, and those semesters count towards the maximum time allowed to complete the programme; exceeding it means loss of studentship. Apply before course registration closes for that semester, and only through the online system, since no other route is recognised. To resume, give a copy of the approval letter to the College Academic Affairs Office at the start of registration, settle outstanding fees and register within the period set by the academic calendar."
     },
     {
       "id": "withdrawal",
@@ -379,7 +420,7 @@
       "category": "deferment_and_withdrawal",
       "office": "aad",
       "documented": true,
-      "channel": "Letter to the Registrar",
+      "channel": "STS portal",
       "aliases": [
         "drop out",
         "leave school permanently",
@@ -392,18 +433,19 @@
         "withdrawal"
       ],
       "steps": [
-        "Write to the Registrar through your Head of Department, stating your intention to withdraw and the effective date.",
-        "Have the letter endorsed by your Head of Department.",
-        "Obtain clearance from the Library, your hall of residence and the Finance Directorate.",
-        "Submit the endorsed letter and clearance form to the Academic Affairs Directorate.",
-        "Collect written acknowledgement for your records."
+        "Log in to the STS Portal with your UG Student ID number and PIN.",
+        "Open the Withdrawal Request Form tab.",
+        "Complete every field marked with an asterisk, state the purpose of your withdrawal and select your reasons.",
+        "Under Refund Request, say whether you are requesting a refund. If you are, upload your payment receipts and any supporting documents.",
+        "Complete the Bank Information section, then submit the form.",
+        "Hand in your student ID card at Room D10, Academic Affairs Directorate, and sign for the return. Return library books, laptops, room keys and any other University property to the offices concerned."
       ],
       "fees": [],
       "turnaround": null,
-      "source": "syn_withdrawal",
-      "provenance": "synthetic",
-      "synthetic_note": "Procedure authored by the project team. No published University source was found for it. Shown to students with a synthetic-source badge.",
-      "caveat": "Consider deferment first if the difficulty is temporary, because withdrawal ends studentship and returning means reapplying for admission."
+      "source": "withdrawal_refund_process",
+      "provenance": "real",
+      "caveat": "Refunds depend on timing. A fresher must request before the withdrawal deadline on the admission letter, and the refund is less 30% of the academic fees due. A continuing student must request before the deadline for regular course registration in the semester of withdrawal. After those points, payments are not refundable. Consider deferment first if the difficulty is temporary, because withdrawal ends studentship.",
+      "location": "Room D10, Academic Affairs Directorate (to hand in your student ID card)"
     },
     {
       "id": "student_id_card",
@@ -501,7 +543,8 @@
       "fees": [],
       "turnaround": null,
       "caveat": "The indexed handbook is dated 2017, so confirm current requirements with your department.",
-      "source": "humanities_handbook"
+      "source": "humanities_handbook",
+      "provenance": "real"
     },
     {
       "id": "check_results",
@@ -528,7 +571,8 @@
       ],
       "fees": [],
       "turnaround": null,
-      "source": "change_grade_form"
+      "source": "change_grade_form",
+      "provenance": "real"
     },
     {
       "id": "degree_classification",
@@ -558,7 +602,8 @@
       "steps": [],
       "fees": [],
       "not_documented_note": null,
-      "caveat": "The classification scheme is published in the General Regulations for Junior Members. Confirm your own standing with your department, since the regulations held here date from 2017."
+      "caveat": "The classification scheme is published in the General Regulations for Junior Members. Confirm your own standing with your department, since the regulations held here date from 2017.",
+      "provenance": "real"
     },
     {
       "id": "welfare_support",

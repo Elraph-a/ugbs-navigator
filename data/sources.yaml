@@ -157,3 +157,41 @@ sources:
     publisher: "University of Ghana Business School"
     authority: primary
     published_date: null
+
+  # --- Found by the browser-rendered fetch, 26 September -------------------
+  # The registration hub and the academic calendar are JavaScript-rendered, so
+  # the first collection saw only their menus and recorded them as failures.
+  # Rendering them in a real browser revealed the pages below. Two of them
+  # publish procedures we had assumed were unpublished and had written
+  # synthetic stand-ins for.
+  - id: deferment_procedure
+    title: "Deferment of Programme of Study"
+    url: https://www.ug.edu.gh/aad/node/89
+    category: deferment_and_withdrawal
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: withdrawal_refund_process
+    title: "Withdrawal and Refund Process"
+    url: https://www.ug.edu.gh/aad/withdrawal-refund-process
+    category: deferment_and_withdrawal
+    publisher: "Academic Affairs Directorate, University of Ghana"
+    authority: primary
+    published_date: null
+
+  - id: academic_calendar_l100
+    title: "Academic Calendar 2025/2026 - First Semester, Level 100"
+    url: https://www.ug.edu.gh/academics/calendar/undergraduate/first-semester-l100
+    category: registration
+    publisher: "University of Ghana"
+    authority: primary
+    published_date: "2025"
+
+  - id: academic_calendar_second_semester
+    title: "Academic Calendar 2025/2026 - Second Semester"
+    url: https://www.ug.edu.gh/academics/calendar/second-semester
+    category: registration
+    publisher: "University of Ghana"
+    authority: primary
+    published_date: "2025"

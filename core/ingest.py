@@ -87,14 +87,31 @@ def html_to_text(html: str) -> str:
     ):
         tag.decompose()
 
-    # Prefer the main content region when the page marks one.
-    root = (
-        soup.find("main")
-        or soup.find("article")
-        or soup.find(attrs={"role": "main"})
-        or soup.find("div", class_=re.compile(r"content|region-content", re.I))
-        or soup.body
-        or soup
+    # Prefer the main content region when the page marks one -- but only if it
+    # actually holds the content. The academic calendar marks an <article> that
+    # is empty and builds its dates elsewhere, so preferring the tag by name
+    # returned nothing at all and the page was written off as JavaScript-only.
+    candidates = [
+        c
+        for c in (
+            soup.find("main"),
+            soup.find("article"),
+            soup.find(attrs={"role": "main"}),
+            soup.find("div", class_=re.compile(r"content|region-content", re.I)),
+            soup.body,
+            soup,
+        )
+        if c is not None
+    ]
+    sizes = [(c, len(c.get_text(" ", strip=True))) for c in candidates]
+    widest = max(size for _, size in sizes) if sizes else 0
+    # The marked-up region is the tidier choice, but only when it holds most of
+    # the page. On the academic calendar it held the introduction and nothing
+    # else, while the dates sat in plain divs beside it, so preferring it by
+    # name lost the whole table.
+    root = next(
+        (c for c, size in sizes if size >= max(200, widest * 0.7)),
+        soup.body or soup,
     )
 
     parts: list[str] = []
@@ -119,7 +136,59 @@ def html_to_text(html: str) -> str:
         else:
             parts.append(text)
 
-    return "\n".join(parts)
+    # Calendar rows. The academic calendar pairs a <time> with an activity
+    # inside plain layout divs, so the walk above sees none of it: the page
+    # extracted as its own introduction and nothing else. Each row becomes one
+    # readable line, which is also how a student reads the table.
+    for moment in root.find_all("time"):
+        # Climb to the element that holds the activity as well as the date. The
+        # calendar puts them in sibling columns, so the nearest parent is the
+        # date column alone: stopping there produced rows of bare dates.
+        row = None
+        for ancestor in moment.parents:
+            if ancestor.name not in {"div", "tr", "li", "section"}:
+                continue
+            whole = ancestor.get_text(" ", strip=True)
+            dates = " ".join(t.get_text(" ", strip=True) for t in ancestor.find_all("time"))
+            if len(whole) - len(dates) >= 10:
+                row = ancestor
+                break
+        if row is None:
+            continue
+        whole = " ".join(row.get_text(" ", strip=True).split())
+        dates = " to ".join(
+            " ".join(t.get_text(" ", strip=True).split()) for t in row.find_all("time")
+        )
+        # Activity first, then its dates. Read the other way round, the model
+        # paired "Matriculation" with the dates of the row below it.
+        activity = whole
+        for piece in (t.get_text(" ", strip=True) for t in row.find_all("time")):
+            activity = activity.replace(" ".join(piece.split()), " ")
+        activity = " ".join(activity.replace(" - ", " ").split())
+        text = f"{activity}: {dates}" if activity and dates else whole
+
+        key = text.lower()
+        if len(text) < 8 or key in seen:
+            continue
+        seen.add(key)
+        parts.append(f"- {text}")
+
+    extracted = "\n".join(parts)
+
+    # Some pages lay their content out in bare divs and spans, with none of the
+    # block tags above. Walking the tags then yields almost nothing from a page
+    # that plainly has text, so fall back to reading the region directly.
+    if len(extracted) < 200:
+        raw = root.get_text("\n", strip=True)
+        if len(raw) > len(extracted):
+            lines, previous = [], None
+            for line in (" ".join(l.split()) for l in raw.splitlines()):
+                if len(line) >= 3 and line != previous:
+                    lines.append(line)
+                    previous = line
+            extracted = "\n".join(lines)
+
+    return extracted
 
 
 def clean_text(text: str) -> str:
