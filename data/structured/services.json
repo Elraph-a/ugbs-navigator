@@ -531,6 +531,36 @@
       "source": "change_grade_form"
     },
     {
+      "id": "degree_classification",
+      "name": "Degree classification and grade point average",
+      "category": "results_and_records",
+      "office": "aad",
+      "documented": true,
+      "source": "junior_member_regulations",
+      "channel": "General Regulations for Junior Members",
+      "aliases": [
+        "cgpa",
+        "class of degree",
+        "classification",
+        "degree class",
+        "degree classification",
+        "fgpa",
+        "final grade point average",
+        "first class",
+        "gpa",
+        "grade point average",
+        "grading system",
+        "pass mark",
+        "second class",
+        "third class",
+        "what class"
+      ],
+      "steps": [],
+      "fees": [],
+      "not_documented_note": null,
+      "caveat": "The classification scheme is published in the General Regulations for Junior Members. Confirm your own standing with your department, since the regulations held here date from 2017."
+    },
+    {
       "id": "welfare_support",
       "name": "Find the right student support service",
       "category": "welfare_and_support",

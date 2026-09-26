@@ -99,6 +99,8 @@ export interface AnswerResponse {
   pii_redacted: string[];
   sections: Section[];
   escalated: boolean;
+  /** The reply explains a general term; no University document defines it. */
+  general?: boolean;
   escalation_reason: string | null;
   office: Office | null;
   category: string | null;

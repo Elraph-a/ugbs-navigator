@@ -158,6 +158,33 @@ def office_for_service(service: dict | None) -> dict | None:
     return office
 
 
+def office_by_term(question: str) -> dict | None:
+    """The office or portal a question names, if it names one.
+
+    "What is MIS Web?" is a question the catalogue can answer -- every office
+    carries a transcribed description -- but retrieval finds no procedure for
+    it, so the confidence gate used to decline. Matching the name here turns
+    those into grounded answers instead of refusals.
+
+    Longest term first, so "academic affairs directorate" is not shadowed by
+    the "aad" of another office's text.
+    """
+    lowered = f" {question.lower()} "
+    _, offices = load_catalogue()
+
+    terms: list[tuple[str, dict]] = []
+    for office in offices.values():
+        for term in [office["name"], office["short_name"], *office.get("aliases", [])]:
+            if term:
+                terms.append((term.lower(), office))
+    terms.sort(key=lambda pair: len(pair[0]), reverse=True)
+
+    for term, office in terms:
+        if re.search(rf"(?<![\w]){re.escape(term)}(?![\w])", lowered):
+            return office
+    return None
+
+
 def office_for_category(category: str) -> dict | None:
     """Fallback when no specific service matched but the topic is known."""
     _, offices = load_catalogue()

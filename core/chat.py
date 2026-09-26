@@ -120,6 +120,20 @@ graduation, student support) are illustrative guides written for this project.
 Do not state any University fees, offices, contacts, dates or procedures in this \
 reply.""" + _STYLE
 
+SYSTEM_CONCEPT = IDENTITY + """
+
+The student has asked what a general term means, and no University document
+defines it. Explain the term itself in two or three plain sentences, the way a
+helpful member of staff would.
+
+- Explain the general meaning only. State no University of Ghana fee, figure,
+  date, rule, threshold, office or procedure, not even one you believe you know.
+- If the term has a University-specific version (how it is calculated here, what
+  counts as a pass, which office handles it), say plainly that the documents you
+  hold do not cover that, and that the student should confirm it with their
+  department or the relevant office.
+- Do not invent a citation. There is nothing to cite.""" + _STYLE
+
 OFF_TOPIC_NOTE = """
 
 The student has asked about something outside University administration. Do not \
@@ -218,6 +232,8 @@ def analyse(history: list[dict], latest: str) -> dict:
 
 def _describe_office(office: dict) -> str:
     parts = [office["name"]]
+    if office.get("description"):
+        parts.append(f"what it is: {office['description']}")
     for key, label in (
         ("location", "location"),
         ("postal_address", "post"),
@@ -307,6 +323,15 @@ def format_material(material: dict) -> str:
             )
             lines.append(f"[{index}] {hit['doc_title']}, {heading}{dated}{synthetic}\n{hit['text']}")
 
+    defines = material.get("defines")
+    if defines:
+        lines += [
+            "",
+            f"THE STUDENT IS ASKING WHAT THIS IS: {_describe_office(defines)}",
+            "Say what it is, in your own words, from the description above. No "
+            "procedure was retrieved, so give no steps, fees or dates.",
+        ]
+
     if material["escalated"]:
         lines += [
             "",
@@ -329,6 +354,16 @@ def extractive_answer(material: dict) -> str:
             "I can't predict how an individual student will do, because I only hold "
             "published University procedure. For academic guidance, speak to your "
             "department or academic advisor."
+        )
+
+    if material.get("general"):
+        # Explaining a term in general words is the one thing this fallback
+        # cannot do: it only quotes, and nothing held defines the term.
+        return (
+            "Nothing in the University documents I hold defines that term, and I "
+            "can only explain it in my own words when the assistant's language "
+            "model is reachable. Your department or the relevant office can "
+            "confirm what it means here."
         )
 
     parts: list[str] = []
@@ -612,17 +647,23 @@ def run_chat(messages: list[dict]) -> Iterator[dict]:
     user_content = latest
     if query != latest:
         user_content += f"\n\n(Standalone form of this question: {query})"
-    user_content += (
-        "\n\n---\nMATERIAL FOR THIS MESSAGE, the only source of University facts "
-        f"you may use:\n\n{format_material(material)}"
-    )
+    if not material.get("general"):
+        user_content += (
+            "\n\n---\nMATERIAL FOR THIS MESSAGE, the only source of University facts "
+            f"you may use:\n\n{format_material(material)}"
+        )
 
     yield {"type": "step", "id": "write", "label": "Writing the answer", "pending": True}
+
+    # A general term nothing defines is explained on its own terms, under a
+    # prompt that forbids every University fact. Everything else answers from
+    # the material.
+    system = SYSTEM_CONCEPT if material.get("general") else SYSTEM_ANSWER
 
     meta: dict = {}
     text = ""
     for piece in reply_stream(
-        [{"role": "system", "content": SYSTEM_ANSWER}, *history, {"role": "user", "content": user_content}],
+        [{"role": "system", "content": system}, *history, {"role": "user", "content": user_content}],
         extractive_answer(material),
         meta=meta,
     ):
@@ -673,6 +714,9 @@ def run_chat(messages: list[dict]) -> Iterator[dict]:
             "sections": sections,
             "escalated": material["escalated"],
             "declined": material["escalated"],
+            # A general explanation rests on no University document, and the
+            # interface says so rather than letting it look sourced.
+            "general": bool(material.get("general")),
             "escalation_reason": material["escalation_reason"],
             "office": material["office"],
             "category": material["category"],

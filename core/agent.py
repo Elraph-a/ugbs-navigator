@@ -62,6 +62,27 @@ PREDICTION_PATTERNS = re.compile(
 # sees, so they have to stand on their own.
 # --------------------------------------------------------------------------
 
+# "What is MIS Web?", "what does deferment mean?" -- a question about what
+# something IS, rather than what to do about it.
+DEFINITION_PATTERNS = re.compile(
+    r"\b(?:what(?:'s| is| are)\b|what do(?:es)? .{1,40}\bmean\b|what do you mean by\b|"
+    r"define\b|meaning of\b|explain what\b)",
+    re.IGNORECASE,
+)
+
+# Words that make a question ask for a University fact rather than a meaning.
+# "What is the transcript fee" must stay on the strict path: an explanation of
+# what a fee is would be useless, and a figure from the model would be a
+# fabrication. Only questions with none of these may be answered generally.
+FACT_SEEKING = re.compile(
+    r"\b(fee|fees|cost|costs|price|charge|charges|how much|amount|deadline|"
+    r"deadlines|date|dates|when|where|room|hours|pass mark|classification|"
+    r"require|required|requirement|requirements|need|needed|document|documents|"
+    r"form|forms|step|steps|procedure|process|apply|applying|register|"
+    r"registration|submit|collect|eligib)\w*",
+    re.IGNORECASE,
+)
+
 GREETING = re.compile(
     r"^\s*(hi|hiya|hello|hey|yo|good\s+(morning|afternoon|evening|day)|greetings|"
     r"how\s+are\s+you|please)\b[\s,.!-]*",
@@ -530,6 +551,34 @@ def resolve(query: str) -> Iterator[dict]:
     escalated = not answered
     reason = None
 
+    # Two kinds of question the gate used to decline for no good reason: one the
+    # catalogue can define, and one that asks what a general term means.
+    asks_meaning = bool(DEFINITION_PATTERNS.search(query))
+    named_office = router.office_by_term(query) if asks_meaning else None
+    # A question about a University fact never takes either path, however it is
+    # phrased: "what is the transcript fee" needs the figure, not an explanation.
+    general = asks_meaning and not named_office and not FACT_SEEKING.search(query)
+
+    if escalated and named_office:
+        escalated = False
+        trace.append({"tool": "define_term", "result": named_office["id"]})
+        yield {
+            "type": "step",
+            "id": "define",
+            "label": "Looking up the term",
+            "detail": f"{named_office['name']}, from the verified catalogue",
+            "tone": "verified",
+        }
+    elif escalated and general:
+        escalated = False
+        trace.append({"tool": "explain_generally", "result": "no University facts"})
+        yield {
+            "type": "step",
+            "id": "define",
+            "label": "Explaining the term",
+            "detail": "in general terms; no University document defines it",
+        }
+
     if escalated:
         # Keep the specific reason, so the knowledge-gap register distinguishes
         # "we hold the wrong year" from "nobody published this" from "retrieval
@@ -549,7 +598,8 @@ def resolve(query: str) -> Iterator[dict]:
     office = (
         router.office_for_service(leading)
         if leading
-        else primary.get("office")
+        else named_office
+        or primary.get("office")
         or (router.office_for_category(primary["category"]) if primary.get("category") else None)
     )
 
@@ -560,6 +610,12 @@ def resolve(query: str) -> Iterator[dict]:
             "prediction": False,
             "procedures": procedures,
             "passages": _select_passages(procedures),
+            # Attached whenever the student asked what a named office is, even
+            # if a procedure also matched: "what is the School of Graduate
+            # Studies?" found the graduate transcript route and answered that
+            # it held no description of the School itself.
+            "defines": named_office,
+            "general": general and not answered,
             "escalated": escalated,
             "escalation_reason": reason,
             "office": office,

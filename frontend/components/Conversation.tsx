@@ -314,6 +314,14 @@ function TurnFooter({ response, text }: { response: AnswerResponse; text: string
         </span>
       )}
 
+      {/* A general explanation rests on no document, so it must not look sourced. */}
+      {response.general && !response.escalated && (
+        <span className="flex items-center gap-1.5 text-[0.75rem] text-amber">
+          <Alert className="size-3.5" />
+          General explanation, not from a University document
+        </span>
+      )}
+
       {response.pii_redacted.length > 0 && (
         <span className="flex items-center gap-1.5 text-[0.75rem] text-amber">
           <Shield className="size-3.5" />

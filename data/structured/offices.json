@@ -32,7 +32,12 @@
         "examinations",
         "fees_and_finance"
       ],
-      "location_note": "The University publishes Room D2 only for transcript collection and receipt submission. No general location for the Directorate is published, so the room is attached to those services rather than to the office."
+      "location_note": "The University publishes Room D2 only for transcript collection and receipt submission. No general location for the Directorate is published, so the room is attached to those services rather than to the office.",
+      "aliases": [
+        "aad",
+        "academic affairs",
+        "academic affairs directorate"
+      ]
     },
     {
       "id": "sgs",
@@ -53,6 +58,11 @@
         "transcripts",
         "results_and_records",
         "registration"
+      ],
+      "aliases": [
+        "sgs",
+        "school of graduate studies",
+        "graduate school"
       ]
     },
     {
@@ -72,6 +82,9 @@
       "handles": [
         "fees_and_finance",
         "transcripts"
+      ],
+      "aliases": [
+        "cash office"
       ]
     },
     {
@@ -96,6 +109,11 @@
         "course_advising",
         "admissions",
         "welfare_and_support"
+      ],
+      "aliases": [
+        "ugbs",
+        "business school",
+        "university of ghana business school"
       ]
     },
     {
@@ -115,6 +133,11 @@
       "handles": [
         "transcripts",
         "examinations"
+      ],
+      "aliases": [
+        "sts",
+        "sts portal",
+        "student transcript system"
       ]
     },
     {
@@ -135,6 +158,13 @@
         "registration",
         "results_and_records",
         "it_and_portals"
+      ],
+      "aliases": [
+        "mis",
+        "mis web",
+        "mis portal",
+        "student ienabler",
+        "ienabler"
       ]
     }
   ]
