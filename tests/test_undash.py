@@ -16,6 +16,11 @@ CASES = [
     ("It takes 10 — 12 days.", "It takes 10 to 12 days."),
     # A dash used as a bullet becomes a hyphen bullet.
     ("— Bring your ID card", "- Bring your ID card"),
+    # The model often surrounds a dash with a narrow no-break space (U+202F)
+    # rather than an ordinary one. Caught in the interface checks.
+    ("Physical copy – pick-up at AAD", "Physical copy, pick-up at AAD"),
+    ("**Fee** – GH₵30", "**Fee**: GH₵30"),
+    ("Open 9am – 5pm.", "Open 9am to 5pm."),
     # Left alone: unspaced ranges, hyphens, and text without dashes.
     ("Pages 1–3 of the 2025/2026 schedule.", "Pages 1–3 of the 2025/2026 schedule."),
     ("A well-known, up-to-date form.", "A well-known, up-to-date form."),

@@ -263,17 +263,23 @@ def reply_stream(
 # --------------------------------------------------------------------------
 
 _DASHES = "–—"
-_BOLD_DASH = re.compile(r"\*\*[ \t]*[–—][ \t]*")     # "**Label** – text"
+
+# The model does not always put an ordinary space beside a dash: gpt-oss often
+# uses a narrow no-break space (U+202F), which slipped past patterns written
+# with [ \t] alone and reached the interface checks. S matches any of them.
+_S = "[ \t    ]"
+
+_BOLD_DASH = re.compile(rf"\*\*{_S}*[–—]{_S}*")     # "**Label** – text"
 # A range: "10 – 12", "8am – 5pm", "Monday – Friday". Read as "to", not a pause.
 # A tight en dash ("1–3") is the ordinary way to write a range and stays.
 _RANGE_DASH = re.compile(
-    r"(\d|[ap]\.?m\.?|day)"
-    r"(?:[ \t]+[–—][ \t]*|[ \t]*[–—][ \t]+|—)"
+    rf"(\d|[ap]\.?m\.?|day)"
+    rf"(?:{_S}+[–—]{_S}*|{_S}*[–—]{_S}+|—)"
     r"(\d|mon|tue|wed|thu|fri|sat|sun)",
     re.IGNORECASE,
 )
-_LINE_DASH = re.compile(r"(?m)^([ \t]*)[–—][ \t]+")    # a dash used as a bullet
-_SPACED_DASH = re.compile(r"[ \t]*[–—][ \t]+|[ \t]+[–—][ \t]*")
+_LINE_DASH = re.compile(rf"(?m)^({_S}*)[–—]{_S}+")    # a dash used as a bullet
+_SPACED_DASH = re.compile(rf"{_S}*[–—]{_S}+|{_S}+[–—]{_S}*")
 _TIGHT_EM = re.compile(r"(\w)—(\w)")                        # "fees—including"
 
 

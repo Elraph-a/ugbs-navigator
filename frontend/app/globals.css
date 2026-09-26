@@ -32,6 +32,7 @@
   --color-amber-soft: var(--amber-soft);
   --color-oxide: var(--oxide);
   --color-oxide-soft: var(--oxide-soft);
+  --color-gold: var(--gold);
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -39,36 +40,44 @@
   --radius-xl: 22px;
 }
 
+/* The palette is the University of Ghana Business School's own, sampled from
+   the crest on ugbs.ug.edu.gh: indigo #3d2d59, red #ed3237, gold #d6a21b.
+   Indigo carries the interface. Red and gold are too light for small text at
+   their brand values, so text uses darkened versions and the brand values are
+   kept for fills: every pairing below is at least 4.5:1. */
 :root {
-  --canvas: #f6f8f7;
+  --canvas: #f7f6fa;
   --surface: #ffffff;
   --raised: #ffffff;
-  --sunk: #eef1f0;
+  --sunk: #efedf5;
 
-  --shell: #101d19;
-  --shell-2: #1a2d27;
-  --shell-ink: #eef3f1;
-  --shell-muted: #9db5ac;
+  --shell: #32254a;
+  --shell-2: #3d2d59;
+  --shell-ink: #f1eff7;
+  --shell-muted: #b3a9cb;
 
-  --ink: #0d1513;
-  --muted: #55635e;
-  --faint: #7d8a85;
-  --line: #e4e8e6;
-  --line-soft: #eef1ef;
+  --ink: #15121f;
+  --muted: #565070;
+  --faint: #6b6584;
+  --line: #e5e2ee;
+  --line-soft: #efedf5;
 
-  --accent: #0e7c66;
-  --accent-ink: #0a5c4c;
-  --accent-soft: #e6f2ee;
+  --accent: #3d2d59;
+  --accent-ink: #2d2042;
+  --accent-soft: #efecf7;
 
-  --amber: #8d5b00;
-  --amber-soft: #fbf1de;
+  /* UGBS gold, darkened for text. --gold is the brand value, for fills. */
+  --amber: #8a6408;
+  --amber-soft: #fbf1dc;
+  --gold: #d6a21b;
 
-  --oxide: #a4341c;
-  --oxide-soft: #fbeae5;
+  /* UGBS red, darkened for text. */
+  --oxide: #c1272d;
+  --oxide-soft: #fdeceb;
 
-  --shadow-sm: 0 1px 2px rgb(13 21 19 / 0.05), 0 1px 3px rgb(13 21 19 / 0.04);
-  --shadow-md: 0 2px 4px rgb(13 21 19 / 0.04), 0 10px 28px rgb(13 21 19 / 0.07);
-  --shadow-lg: 0 4px 8px rgb(13 21 19 / 0.05), 0 20px 48px rgb(13 21 19 / 0.10);
+  --shadow-sm: 0 1px 2px rgb(21 18 31 / 0.05), 0 1px 3px rgb(21 18 31 / 0.04);
+  --shadow-md: 0 2px 4px rgb(21 18 31 / 0.04), 0 10px 28px rgb(21 18 31 / 0.07);
+  --shadow-lg: 0 4px 8px rgb(21 18 31 / 0.05), 0 20px 48px rgb(21 18 31 / 0.10);
 
   /* Entering elements start fast, so the interface feels answerable. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);

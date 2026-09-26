@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
-import { Chart, Chat, Mark, Plus, Shield } from "./Icons";
+import { useEffect, useState } from "react";
+import { Chart, Chat, Close, Menu, Plus, Shield } from "./Icons";
 
 const TOPICS = [
   "How do I request an official transcript?",
@@ -18,36 +19,95 @@ export function Sidebar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
+  // On a phone the panel sits above the page, so it has to behave like a
+  // dialog: Escape closes it, and the page behind it does not scroll.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
     <>
-      {/* Mobile bar */}
-      <div className="flex items-center gap-3 border-b border-line bg-shell px-4 py-3 text-shell-ink lg:hidden">
-        <Mark className="size-6 text-accent" />
-        <span className="flex-1 text-[0.875rem] font-semibold">Service Navigator</span>
+      {/* Phone header. The panel is reached from here, not shown above the page. */}
+      <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-shell px-3 py-2.5 text-shell-ink lg:hidden">
         <button
           type="button"
-          onClick={() => setOpen((value) => !value)}
-          className="press rounded-sm border border-white/15 px-2.5 py-1 text-[0.75rem] font-medium"
+          onClick={() => setOpen(true)}
+          className="press -m-1 rounded-sm p-2 hover:bg-white/10"
+          aria-label="Open menu"
           aria-expanded={open}
+          aria-controls="sidebar"
         >
-          {open ? "Close" : "Menu"}
+          <Menu className="size-5" />
         </button>
-      </div>
+        <span className="flex-1 truncate text-[0.875rem] font-semibold">
+          UGBS Service Navigator
+        </span>
+        <button
+          type="button"
+          onClick={() => router.push(`/?new=${Date.now()}`)}
+          className="press -m-1 rounded-sm p-2 hover:bg-white/10"
+          aria-label="New conversation"
+        >
+          <Plus className="size-5" />
+        </button>
+      </header>
+
+      {/* Dimmed page behind the open panel. */}
+      <div
+        onClick={() => setOpen(false)}
+        aria-hidden
+        className={`fixed inset-0 z-40 bg-ink/50 transition-opacity duration-200 lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
 
       <aside
-        className={`${open ? "block" : "hidden"} shrink-0 bg-shell text-shell-ink lg:block lg:w-[16.5rem]`}
+        id="sidebar"
+        className={`fixed inset-y-0 left-0 z-50 flex w-[17rem] max-w-[85vw] shrink-0 flex-col bg-shell text-shell-ink transition-transform duration-[250ms] ease-[var(--ease-out)] motion-reduce:transition-none lg:static lg:z-auto lg:w-[16.5rem] lg:max-w-none lg:translate-x-0 ${
+          open ? "translate-x-0 shadow-[var(--shadow-lg)]" : "-translate-x-full"
+        }`}
       >
-        <div className="flex h-full flex-col gap-6 p-4">
-          <div className="hidden items-center gap-2.5 px-1 pt-1 lg:flex">
-            <Mark className="size-7 text-accent" />
-            <div className="min-w-0">
-              <p className="truncate text-[0.875rem] font-semibold leading-tight">
+        <div className="flex h-full flex-col gap-5 overflow-y-auto p-4">
+          <div className="flex items-start gap-2">
+            <Link
+              href="/"
+              prefetch={false}
+              onClick={() => setOpen(false)}
+              className="press min-w-0 flex-1 rounded-sm"
+            >
+              {/* The crest is dark indigo, so it sits on a light card to stay legible. */}
+              <span className="block w-fit rounded-sm bg-white px-2.5 py-1.5">
+                <Image
+                  src="/ugbs-logo.png"
+                  alt="University of Ghana Business School"
+                  width={258}
+                  height={100}
+                  priority
+                  className="h-8 w-auto"
+                />
+              </span>
+              <span className="mt-2 block text-[0.875rem] font-semibold leading-tight">
                 Service Navigator
-              </p>
-              <p className="truncate text-[0.6875rem] leading-tight text-shell-muted">
-                UGBS · University of Ghana
-              </p>
-            </div>
+              </span>
+              <span className="mt-0.5 block text-[0.6875rem] leading-snug text-shell-muted">
+                Student project, not an official UGBS service
+              </span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="press -m-1 rounded-sm p-2 hover:bg-white/10 lg:hidden"
+              aria-label="Close menu"
+            >
+              <Close className="size-5" />
+            </button>
           </div>
 
           {/* A fresh ?new= value remounts the conversation; plain "/" would keep it. */}
@@ -102,7 +162,7 @@ export function Sidebar() {
 
           <div className="rounded-sm bg-white/[0.06] p-3">
             <p className="flex items-center gap-1.5 text-[0.75rem] font-semibold">
-              <Shield className="size-3.5 text-accent" />
+              <Shield className="size-3.5 text-gold" />
               Grounded answers
             </p>
             <p className="pt-1 text-[0.6875rem] leading-relaxed text-shell-muted">
