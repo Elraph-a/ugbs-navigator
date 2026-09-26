@@ -9,6 +9,7 @@ core/ so the evaluation tool exercises exactly the same code this serves.
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
 import sys
@@ -269,8 +270,39 @@ def ask(request: AskRequest, http: Request) -> dict:
     return response
 
 
+# ---------------------------------------------------------------------------
+# The administrative dashboard
+#
+# The password is typed on the dashboard page and checked here, so the figures
+# cannot be read by calling this endpoint directly. It is one shared password
+# rather than accounts: enough to keep service data out of casual view, and
+# stated as such in the report. The comparison is constant-time, wrong attempts
+# are counted against the same per-visitor window as everything else, and the
+# password is never logged or returned.
+# ---------------------------------------------------------------------------
+
+ADMIN_HEADER = "x-admin-key"
+
+
+def _check_admin(request: Request) -> None:
+    password = config.settings.admin_password
+    if not password:
+        raise HTTPException(
+            status_code=503,
+            detail="The dashboard is not configured: set ADMIN_PASSWORD on the server.",
+        )
+
+    supplied = request.headers.get(ADMIN_HEADER, "")
+    if not hmac.compare_digest(supplied, password):
+        # A wrong password costs a request from the visitor's budget, so the
+        # password cannot be guessed at speed.
+        _allow(request)
+        raise HTTPException(status_code=401, detail="Wrong password.")
+
+
 @app.get("/analytics")
-def get_analytics() -> dict:
+def get_analytics(request: Request) -> dict:
+    _check_admin(request)
     return analytics.dashboard()
 
 

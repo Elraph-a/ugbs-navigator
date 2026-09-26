@@ -6,6 +6,10 @@ decision is decoration, and the brief says so explicitly.
 
     demand_by_category      -> which topics need clearer published guidance
     weekly_demand           -> when to open extra service windows
+    busiest_hours           -> when to put a second person on the desk
+    most_asked              -> what belongs on a FAQ page or noticeboard
+    repeat_rate             -> would publishing a few answers remove the traffic
+    service_health          -> is the assistant fast enough, and holding up
     knowledge_gaps          -> which documents to publish next
     gap_loop                -> did publishing them actually work
     deflection              -> is the assistant reducing front-desk load
@@ -19,7 +23,7 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter, defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 
 from core import config, router, store
 
@@ -476,6 +480,129 @@ def deflection(rows: list[dict]) -> dict:
     }
 
 
+def busiest_hours(rows: list[dict]) -> dict:
+    """When enquiries arrive, hour by hour and day by day.
+
+    Decision: when to put a second person on the desk, and when the quiet hours
+    are. A weekly total says demand is high; this says it lands between 10 and
+    noon, which is what a rota needs.
+    """
+    if not rows:
+        return {"hours": [], "counts": [], "peak_hour": None, "weekdays": [], "weekday_counts": []}
+
+    by_hour = Counter(int(row["ts"][11:13]) for row in rows)
+    hours = list(range(24))
+    counts = [by_hour.get(hour, 0) for hour in hours]
+
+    names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    by_day = Counter(datetime.fromisoformat(row["ts"]).weekday() for row in rows)
+
+    busiest = max(by_hour, key=lambda h: by_hour[h])
+    return {
+        "hours": hours,
+        "counts": counts,
+        # The working window, for the sentence the panel leads with.
+        "peak_hour": busiest,
+        "peak_count": by_hour[busiest],
+        "weekdays": names,
+        "weekday_counts": [by_day.get(index, 0) for index in range(7)],
+    }
+
+
+def most_asked(rows: list[dict], limit: int = 8) -> list[dict]:
+    """The questions that come back most often, however they were worded.
+
+    Decision: what belongs on a FAQ page, a noticeboard or in the orientation
+    pack. A question asked two hundred times in a semester is a leaflet, not a
+    conversation.
+    """
+    groups: dict[str, list[dict]] = defaultdict(list)
+    for row in rows:
+        if row["question"]:
+            groups[_normalise_question(row["question"])].append(row)
+
+    ranked = sorted(groups.values(), key=len, reverse=True)[:limit]
+    services, _ = router.load_catalogue()
+
+    out = []
+    for members in ranked:
+        declined = sum(1 for r in members if r["escalated"])
+        service_id = next((r["service_id"] for r in members if r["service_id"]), None)
+        out.append(
+            {
+                "question": members[0]["question"],
+                "volume": len(members),
+                "share": round(len(members) / max(len(rows), 1), 4),
+                "declined": declined,
+                "service": services.get(service_id, {}).get("name") if service_id else None,
+                "category": members[0]["category"],
+            }
+        )
+    return out
+
+
+def repeat_rate(rows: list[dict]) -> dict:
+    """How much of the load is the same few questions returning.
+
+    Decision: whether publishing a handful of answers would remove most of the
+    traffic, or whether demand is genuinely varied and needs staff instead.
+    """
+    if not rows:
+        return {"distinct": 0, "total": 0, "repeated_share": 0.0, "top_five_share": 0.0}
+
+    groups = Counter(_normalise_question(row["question"]) for row in rows if row["question"])
+    if not groups:
+        return {"distinct": 0, "total": len(rows), "repeated_share": 0.0, "top_five_share": 0.0}
+
+    total = sum(groups.values())
+    repeated = sum(count for count in groups.values() if count > 1)
+    top_five = sum(count for _, count in groups.most_common(5))
+    return {
+        "distinct": len(groups),
+        "total": total,
+        "repeated_share": round(repeated / total, 4),
+        "top_five_share": round(top_five / total, 4),
+    }
+
+
+def service_health(rows: list[dict]) -> dict:
+    """How the assistant itself is performing, as a service.
+
+    Decision: is it fast enough to be used at a counter, and is it answering or
+    quietly refusing more of what it is asked?
+    """
+    times = sorted(row["elapsed_ms"] for row in rows if row.get("elapsed_ms"))
+    answered = sum(1 for row in rows if not row["escalated"])
+
+    weeks = sorted({_week(row["ts"]) for row in rows})
+    recent, previous = (weeks[-1] if weeks else None), (weeks[-2] if len(weeks) > 1 else None)
+    this_week = sum(1 for row in rows if _week(row["ts"]) == recent)
+    last_week = sum(1 for row in rows if _week(row["ts"]) == previous) if previous else 0
+
+    # The newest week is usually still running, so comparing it with a finished
+    # one reads as a collapse in demand. Say which it is and let the panel
+    # phrase it honestly.
+    partial = recent == _week(datetime.now(timezone.utc).isoformat())
+
+    return {
+        "median_ms": times[len(times) // 2] if times else None,
+        "p90_ms": times[int(len(times) * 0.9)] if times else None,
+        "measured": len(times),
+        "answered_share": round(answered / len(rows), 4) if rows else 0.0,
+        "this_week": this_week,
+        "last_week": last_week,
+        # Positive means demand is rising into the coming week. Withheld while
+        # the week is incomplete, because the comparison would not be like for like.
+        "change": (
+            round((this_week - last_week) / last_week, 4)
+            if last_week and not partial
+            else None
+        ),
+        "week": recent,
+        "partial_week": partial,
+    }
+
+
 def office_load(rows: list[dict]) -> list[dict]:
     """Enquiries routed to each office.
 
@@ -595,6 +722,10 @@ def dashboard() -> dict:
         },
         "demand_by_category": demand_by_category(rows),
         "weekly_demand": weekly_demand(rows),
+        "busiest_hours": busiest_hours(rows),
+        "most_asked": most_asked(rows),
+        "repeat_rate": repeat_rate(rows),
+        "service_health": service_health(rows),
         "knowledge_gaps": knowledge_gaps(rows),
         "gap_loop": gap_loop(rows),
         "deflection": deflection(rows),

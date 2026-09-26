@@ -157,6 +157,39 @@ export interface Dashboard {
     series: Record<string, number[]>;
     totals: number[];
   };
+  busiest_hours: {
+    hours: number[];
+    counts: number[];
+    peak_hour: number | null;
+    peak_count?: number;
+    weekdays: string[];
+    weekday_counts: number[];
+  };
+  most_asked: {
+    question: string;
+    volume: number;
+    share: number;
+    declined: number;
+    service: string | null;
+    category: string | null;
+  }[];
+  repeat_rate: {
+    distinct: number;
+    total: number;
+    repeated_share: number;
+    top_five_share: number;
+  };
+  service_health: {
+    median_ms: number | null;
+    p90_ms: number | null;
+    measured: number;
+    answered_share: number;
+    this_week: number;
+    last_week: number;
+    change: number | null;
+    week: string | null;
+    partial_week: boolean;
+  };
   knowledge_gaps: GapGroup[];
   gap_loop: GapLoop | null;
   deflection: {

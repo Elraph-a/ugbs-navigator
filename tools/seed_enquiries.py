@@ -204,6 +204,10 @@ def main() -> int:
     # Semester ends the day before today, so the dashboard always looks current.
     end = datetime.now(timezone.utc).replace(hour=12, minute=0, second=0, microsecond=0)
     start = end - timedelta(weeks=SEMESTER_WEEKS)
+    # Anchored to a Monday, so the day weights below actually mean Monday to
+    # Sunday. Counted from an arbitrary weekday they landed anywhere, and the
+    # dashboard reported Saturday as the busiest day of the week.
+    start -= timedelta(days=start.weekday())
 
     themes = list(SHAPES)
     weekly_weight = [sum(SHAPES[t][w] for t in themes) for w in range(SEMESTER_WEEKS)]

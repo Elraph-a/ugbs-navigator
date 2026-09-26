@@ -162,3 +162,50 @@ export function RankedBars({
   );
 }
 
+
+/** Enquiries by hour of the day. Columns rather than a line: each hour is a
+ *  slot on a rota, not a point on a trend. */
+export function HourBars({
+  hours,
+  counts,
+  peak,
+}: {
+  hours: number[];
+  counts: number[];
+  peak: number | null;
+}) {
+  const max = Math.max(...counts, 1);
+  const label = (hour: number) =>
+    hour === 0 ? "12am" : hour < 12 ? `${hour}am` : hour === 12 ? "12pm" : `${hour - 12}pm`;
+
+  return (
+    <figure className="mt-1">
+      <div
+        className="flex items-end gap-[3px]"
+        role="img"
+        aria-label={`Enquiries by hour, busiest at ${peak === null ? "no clear hour" : label(peak)}.`}
+      >
+        {hours.map((hour, index) => (
+          <div key={hour} className="group flex flex-1 flex-col items-center gap-1">
+            <span className="text-[0.625rem] text-faint tabular opacity-0 group-hover:opacity-100">
+              {counts[index]}
+            </span>
+            <div
+              className="w-full rounded-t-[2px]"
+              style={{
+                height: `${Math.max((counts[index] / max) * 84, counts[index] ? 2 : 0)}px`,
+                background: hour === peak ? "var(--accent)" : "var(--line)",
+              }}
+              title={`${label(hour)}: ${counts[index]}`}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between pt-1.5 text-[0.625rem] text-faint tabular">
+        {[0, 6, 12, 18, 23].map((hour) => (
+          <span key={hour}>{label(hour)}</span>
+        ))}
+      </div>
+    </figure>
+  );
+}

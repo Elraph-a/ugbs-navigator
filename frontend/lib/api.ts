@@ -29,6 +29,15 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
+    if (response.status === 401) {
+      throw new ApiError("Wrong password.", "Check it and try again.");
+    }
+    if (response.status === 503) {
+      throw new ApiError(
+        "The dashboard is not configured.",
+        "Set ADMIN_PASSWORD on the server, then reload.",
+      );
+    }
     throw new ApiError(
       `The service returned ${response.status}.`,
       detail.slice(0, 300) || undefined,
@@ -44,7 +53,36 @@ export const ask = (question: string) =>
     body: JSON.stringify({ question }),
   });
 
-export const analytics = () => request<Dashboard>("/analytics");
+/** The dashboard password, kept for this browser session only: closing the tab
+ *  signs you out, and it never reaches localStorage or a cookie. */
+const KEY = "ugbs-admin-key";
+
+export const adminKey = () => {
+  try {
+    return sessionStorage.getItem(KEY) ?? "";
+  } catch {
+    return "";
+  }
+};
+
+export const rememberAdminKey = (key: string) => {
+  try {
+    sessionStorage.setItem(KEY, key);
+  } catch {
+    /* private browsing: the password simply has to be typed again */
+  }
+};
+
+export const forgetAdminKey = () => {
+  try {
+    sessionStorage.removeItem(KEY);
+  } catch {
+    /* nothing stored, nothing to clear */
+  }
+};
+
+export const analytics = (key = adminKey()) =>
+  request<Dashboard>("/analytics", { headers: { "X-Admin-Key": key } });
 
 export const services = () =>
   request<{

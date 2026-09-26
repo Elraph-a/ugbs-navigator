@@ -1,26 +1,47 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
-import { analytics, ApiError } from "@/lib/api";
+import { adminKey, analytics, ApiError, forgetAdminKey, rememberAdminKey } from "@/lib/api";
 import type { Dashboard, GapGroup, GapLoop } from "@/lib/types";
-import { DemandOverTime, RankedBars } from "@/components/Charts";
+import { DemandOverTime, HourBars, RankedBars } from "@/components/Charts";
 import { Alert, Chart, Check, Doc, Office, Shield } from "@/components/Icons";
 
 export default function AdminPage() {
   const [data, setData] = useState<Dashboard | null>(null);
   const [error, setError] = useState<{ message: string; hint?: string } | null>(null);
+  // Until the password is accepted there is nothing to show. The server holds
+  // the figures back too, so this is a door rather than a curtain.
+  const [locked, setLocked] = useState(true);
 
-  useEffect(() => {
-    analytics()
-      .then(setData)
-      .catch((exception) =>
-        setError(
+  const load = (key?: string) =>
+    analytics(key)
+      .then((dashboard) => {
+        setData(dashboard);
+        setLocked(false);
+        setError(null);
+        if (key) rememberAdminKey(key);
+      })
+      .catch((exception) => {
+        const detail =
           exception instanceof ApiError
             ? { message: exception.message, hint: exception.hint }
-            : { message: "Could not load the analytics." },
-        ),
-      );
+            : { message: "Could not load the analytics." };
+        if (exception instanceof ApiError && exception.message === "Wrong password.") {
+          forgetAdminKey();
+          setLocked(true);
+        }
+        setError(detail);
+        throw exception;
+      });
+
+  useEffect(() => {
+    // A key from earlier in this browser session opens the page without asking.
+    if (adminKey()) load().catch(() => undefined);
   }, []);
+
+  if (locked) {
+    return <SignIn onSubmit={load} error={error} />;
+  }
 
   return (
     <div className="h-full overflow-y-auto">
@@ -175,6 +196,9 @@ function Report({ data }: { data: Dashboard }) {
           </p>
         )}
       </Panel>
+
+      <UsagePanel data={data} />
+      <MostAskedPanel data={data} />
 
       <div className="mt-10 grid gap-x-10 gap-y-10 md:grid-cols-2">
         <section>
@@ -470,3 +494,198 @@ function Panel({
   );
 }
 
+
+/* ------------------------------------------------------------- sign in --- */
+
+function SignIn({
+  onSubmit,
+  error,
+}: {
+  onSubmit: (key: string) => Promise<unknown>;
+  error: { message: string; hint?: string } | null;
+}) {
+  const [value, setValue] = useState("");
+  const [checking, setChecking] = useState(false);
+
+  return (
+    <div className="grid h-full place-items-center overflow-y-auto px-5 py-10">
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!value.trim() || checking) return;
+          setChecking(true);
+          onSubmit(value.trim())
+            .catch(() => undefined)
+            .finally(() => setChecking(false));
+        }}
+        className="rise w-full max-w-[24rem] rounded-md border border-line bg-surface p-6 shadow-[var(--shadow-md)]"
+      >
+        <span className="grid size-9 place-items-center rounded-sm bg-accent-soft text-accent-ink">
+          <Shield className="size-4" />
+        </span>
+        <h1 className="pt-3 text-[1.25rem] font-semibold leading-tight">Service analytics</h1>
+        <p className="pt-1.5 text-[0.875rem] leading-relaxed text-muted">
+          This view is for Business School staff. Enter the dashboard password to
+          continue.
+        </p>
+
+        <label htmlFor="admin-password" className="label mt-5 block text-faint">
+          Password
+        </label>
+        <input
+          id="admin-password"
+          type="password"
+          value={value}
+          autoFocus
+          autoComplete="current-password"
+          onChange={(event) => setValue(event.target.value)}
+          className="mt-1.5 w-full rounded-sm border border-line bg-canvas px-3 py-2 text-[0.9375rem] outline-none focus:border-accent"
+        />
+
+        {error && (
+          <p className="flex items-start gap-1.5 pt-3 text-[0.8125rem] leading-relaxed text-oxide">
+            <Alert className="mt-px size-3.5 shrink-0" />
+            <span>
+              {error.message}
+              {error.hint ? ` ${error.hint}` : ""}
+            </span>
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={checking || !value.trim()}
+          className="press mt-5 w-full rounded-sm bg-accent px-3 py-2 text-[0.875rem] font-medium text-white disabled:opacity-50"
+        >
+          {checking ? "Checking..." : "Open dashboard"}
+        </button>
+
+        <p className="pt-4 text-[0.75rem] leading-relaxed text-faint">
+          The enquiry log behind this page holds no names, student numbers or
+          contact details: they are removed before anything is stored.
+        </p>
+      </form>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- usage --- */
+
+const hourLabel = (hour: number) =>
+  hour === 0 ? "12am" : hour < 12 ? `${hour}am` : hour === 12 ? "12pm" : `${hour - 12}pm`;
+
+function UsagePanel({ data }: { data: Dashboard }) {
+  const { busiest_hours: clock, service_health: health, repeat_rate: repeat } = data;
+  const simulatedShare = data.summary.total ? data.summary.simulated / data.summary.total : 0;
+  const busiestDay = clock.weekday_counts.indexOf(Math.max(...clock.weekday_counts));
+  const seconds = (ms: number | null) => (ms === null ? "n/a" : `${(ms / 1000).toFixed(1)}s`);
+
+  return (
+    <Panel
+      icon={<Chart className="size-4" />}
+      title="When to put someone on the desk"
+      decision="Decides the hours a second officer is worth rostering, and shows whether demand is rising into the coming week."
+    >
+      <div className="rounded-md border border-line bg-surface p-4 shadow-[var(--shadow-sm)]">
+        <HourBars hours={clock.hours} counts={clock.counts} peak={clock.peak_hour} />
+      </div>
+
+      <p className="max-w-[68ch] pt-3 text-[0.8125rem] leading-relaxed text-muted">
+        {clock.peak_hour === null ? (
+          "No enquiries recorded yet."
+        ) : (
+          <>
+            Enquiries cluster around{" "}
+            <span className="font-semibold tabular">{hourLabel(clock.peak_hour)}</span>, the
+            busiest hour with{" "}
+            <span className="font-semibold tabular">{clock.peak_count}</span> enquiries.{" "}
+            <span className="font-semibold">{clock.weekdays[busiestDay]}</span> is the busiest
+            day of the week.
+          </>
+        )}
+      </p>
+
+      <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat
+          term={health.partial_week ? "This week so far" : "This week"}
+          value={health.this_week.toLocaleString()}
+          note={
+            health.change !== null
+              ? `${health.change >= 0 ? "up" : "down"} ${Math.abs(Math.round(health.change * 100))}% on last week`
+              : health.partial_week
+                ? `week still running; ${health.last_week.toLocaleString()} in the last full week`
+                : "no earlier week to compare"
+          }
+        />
+        <Stat
+          term="Answered outright"
+          value={`${Math.round(health.answered_share * 100)}%`}
+          note="the rest were declined and recorded"
+        />
+        <Stat term="Typical reply" value={seconds(health.median_ms)} note="median across every enquiry" />
+        <Stat term="Slowest 10%" value={seconds(health.p90_ms)} note="90th percentile" />
+      </dl>
+
+      <p className="max-w-[68ch] pt-4 text-[0.8125rem] leading-relaxed text-muted">
+        <span className="font-semibold tabular">
+          {Math.round(repeat.repeated_share * 100)}%
+        </span>{" "}
+        of enquiries are a question someone else has already asked, and the five most
+        common account for{" "}
+        <span className="font-semibold tabular">
+          {Math.round(repeat.top_five_share * 100)}%
+        </span>{" "}
+        on their own. Publishing those few answers would remove more load than any
+        other change.
+      </p>
+
+      {simulatedShare > 0.5 && (
+        <p className="max-w-[68ch] pt-2 text-[0.75rem] leading-relaxed text-amber">
+          Most of these enquiries are simulated, and the simulation draws on a set of
+          question templates, so questions repeat more here than real traffic would.
+          Read the ranking rather than the percentage.
+        </p>
+      )}
+    </Panel>
+  );
+}
+
+function Stat({ term, value, note }: { term: string; value: string; note: string }) {
+  return (
+    <div className="rounded-md border border-line bg-surface px-3 py-2.5 shadow-[var(--shadow-sm)]">
+      <dt className="label text-faint">{term}</dt>
+      <dd className="pt-0.5 text-[1.375rem] font-semibold leading-none tabular">{value}</dd>
+      <dd className="pt-1 text-[0.6875rem] leading-snug text-faint">{note}</dd>
+    </div>
+  );
+}
+
+function MostAskedPanel({ data }: { data: Dashboard }) {
+  if (!data.most_asked.length) return null;
+
+  return (
+    <Panel
+      icon={<Doc className="size-4" />}
+      title="The questions that keep coming back"
+      decision="Decides what belongs on a FAQ page, a noticeboard or in the orientation pack, rather than being answered one student at a time."
+    >
+      <ol className="divide-y divide-line-soft rounded-md border border-line bg-surface shadow-[var(--shadow-sm)]">
+        {data.most_asked.map((row, index) => (
+          <li key={row.question} className="slip flex items-baseline gap-3 px-4 py-2.5" style={{ animationDelay: `${index * 35}ms` }}>
+            <span className="w-5 shrink-0 text-[0.75rem] text-faint tabular">{index + 1}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[0.875rem] leading-snug">{row.question}</span>
+              <span className="block pt-0.5 text-[0.6875rem] text-faint">
+                {row.service ?? row.category?.replace(/_/g, " ") ?? "not routed"}
+                {row.declined > 0 && (
+                  <span className="text-oxide"> · {row.declined} declined</span>
+                )}
+              </span>
+            </span>
+            <span className="shrink-0 text-[0.875rem] font-semibold tabular">{row.volume}</span>
+          </li>
+        ))}
+      </ol>
+    </Panel>
+  );
+}

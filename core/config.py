@@ -87,6 +87,11 @@ class Settings:
     retrieval_top_k: int
     confidence_threshold: float
     retention_days: int
+    # One shared password for the administrative dashboard. Not accounts: it
+    # keeps the service data out of casual view, and the API checks it so the
+    # page cannot simply be bypassed. Empty means the dashboard is unprotected,
+    # which the API refuses to serve rather than assume is intentional.
+    admin_password: str
 
     @property
     def provider_is_available(self) -> tuple[bool, str]:
@@ -132,6 +137,7 @@ def load_settings() -> Settings:
         # refusal precision from 70% to 100% at the cost of one in-scope answer.
         confidence_threshold=_get_float("CONFIDENCE_THRESHOLD", 0.42),
         retention_days=_get_int("RETENTION_DAYS", 180),
+        admin_password=_get("ADMIN_PASSWORD", ""),
     )
 
 

@@ -70,6 +70,7 @@ evaluation tool runs the same code the API serves.
 | `GEMINI_API_KEY` | — | only for `gemini` |
 | `CONFIDENCE_THRESHOLD` | `0.42` | tuned on the gold set; below this no model is called |
 | `RETENTION_DAYS` | `180` | logged enquiries are purged past this |
+| `ADMIN_PASSWORD` | — | opens `/admin`; the API refuses the analytics without it |
 
 Local model inference was measured at 1–3 minutes per answer on the target hardware
 (i5-7200U, no usable GPU) and is not the default.
@@ -78,8 +79,9 @@ Local model inference was measured at 1–3 minutes per answer on the target har
 
 The API runs on Render's free tier (`render.yaml`); the frontend on Vercel.
 
-- **Render:** New → Blueprint → this repository. Enter `GROQ_API_KEY` when asked, and
-  `CORS_ORIGINS` (the Vercel address) once the frontend exists. The build installs
+- **Render:** New → Blueprint → this repository. Enter `GROQ_API_KEY` when asked,
+  `ADMIN_PASSWORD` (anything you choose; the dashboard refuses to open without it),
+  and `CORS_ORIGINS` (the Vercel address) once the frontend exists. The build installs
   dependencies, embeds the passages and seeds the simulated semester.
 - **Vercel:** import the repository with root directory `frontend/` and set
   `NEXT_PUBLIC_API_BASE` to the Render URL.
